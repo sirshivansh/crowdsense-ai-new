@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CrowdSense AI - Live Attendee Map</title>
+  <meta name="description" content="Live stadium map, crowd congestion tracker, and optimal routes for attendees." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <script type="module" crossorigin src="/assets/main-BXWJxj6Q.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/simulation-D_nIdfiU.js">
+  <link rel="stylesheet" crossorigin href="/assets/simulation-C11wreLg.css">
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="topbar glass-panel">
+    <div class="logo">
+      <span class="logo-icon">🏟️</span>
+      <h1>CrowdSense <strong>AI</strong></h1>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn active" title="Heatmap" id="btn-heatmap">🌡️</button>
+      <button class="icon-btn" title="Routing" id="btn-routing">🗺️</button>
+      <a href="/admin.html" class="outline-btn">Admin Dashboard</a>
+    </div>
+  </header>
+
+  <main class="stadium-container">
+    <!-- SVG Stadium Map Overlay Container -->
+    <div class="map-wrapper" id="stadium-map">
+      <!-- We will inject an SVG and heatmap overlays here via JS -->
+      <div id="heatmap-layer"></div>
+      <svg id="route-layer" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" preserveAspectRatio="none"></svg>
+    </div>
+
+    <!-- UI Overlay: Wait Times -->
+    <div class="overlay-panel bottom-left glass-panel wait-times-panel" id="wait-times">
+      <h3>Live Wait Times</h3>
+      <ul class="wait-list" id="wait-list-container">
+        <!-- Injected dynamically -->
+      </ul>
+    </div>
+
+    <!-- UI Overlay: Route Finder (hidden by default) -->
+    <div class="overlay-panel bottom-center glass-panel route-panel hidden" id="route-panel">
+      <h3>Find Path</h3>
+      <div class="route-inputs">
+        <select id="route-start">
+          <option value="gate_a">Gate A</option>
+          <option value="section_101">Section 101</option>
+          <option value="food_court">Food Court</option>
+        </select>
+        <span>to</span>
+        <select id="route-end">
+          <option value="restroom_north">Restroom North</option>
+          <option value="gate_b">Gate B</option>
+          <option value="section_205">Section 205</option>
+        </select>
+        <button id="find-route-btn" class="primary-btn">Go</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Chatbot Widget -->
+  <div class="chatbot-wrapper">
+    <div class="chat-window glass-panel hidden" id="chat-window">
+      <div class="chat-header">
+        <h4>AI Assistant</h4>
+        <button id="close-chat" class="close-btn">✖</button>
+      </div>
+      <div class="chat-body" id="chat-messages">
+        <div class="message ai">Hi! How can I improve your stadium experience today?</div>
+      </div>
+      <div class="chat-input">
+        <input type="text" id="chat-input-field" placeholder="Ask about wait times, seats..." />
+        <button id="send-chat-btn">Send</button>
+      </div>
+    </div>
+    <button class="chat-fab" id="open-chat">
+      💬
+    </button>
+  </div>
+
+</body>
+</html>

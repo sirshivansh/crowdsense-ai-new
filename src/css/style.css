@@ -1,0 +1,801 @@
+/* ============================================================
+   CROWDSENSE AI — Design System
+   Professional SaaS Dark Theme (Linear / Vercel / Stripe level)
+   ============================================================ */
+
+/* ── Tokens ─────────────────────────────────────────────────── */
+:root {
+  /* Surfaces */
+  --bg-base:    #0b0f14;
+  --bg-surface: #131920;
+  --bg-raised:  #1a2230;
+  --bg-hover:   #1f2a3a;
+
+  /* Borders */
+  --border:     rgba(255,255,255,0.07);
+  --border-md:  rgba(255,255,255,0.12);
+
+  /* Text */
+  --text-primary:   #e8edf2;
+  --text-secondary: #7a8a9a;
+  --text-muted:     #4a5568;
+
+  /* Accent (muted blue) */
+  --accent:       #3b82f6;
+  --accent-dim:   rgba(59,130,246,0.15);
+  --accent-hover: #2563eb;
+
+  /* Status colours — desaturated */
+  --green:      #22c55e;
+  --green-dim:  rgba(34,197,94,0.12);
+  --yellow:     #eab308;
+  --yellow-dim: rgba(234,179,8,0.12);
+  --red:        #ef4444;
+  --red-dim:    rgba(239,68,68,0.12);
+
+  /* Shadows */
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.4);
+  --shadow-md:  0 4px 12px rgba(0,0,0,0.5);
+  --shadow-lg:  0 8px 24px rgba(0,0,0,0.6);
+
+  /* Geometry */
+  --radius:     10px;
+  --radius-sm:  6px;
+  --radius-lg:  16px;
+  --transition: all 0.18s ease;
+}
+
+/* ── Reset ───────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Outfit', system-ui, sans-serif;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Utilities ───────────────────────────────────────────────── */
+ul { list-style: none; }
+a  { text-decoration: none; color: var(--accent); }
+.hidden { display: none !important; }
+
+.text-danger  { color: var(--red)    !important; }
+.text-warning { color: var(--yellow) !important; }
+.text-success { color: var(--green)  !important; }
+
+/* ── Typography scale ────────────────────────────────────────── */
+h1 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.01em; }
+h2 { font-size: 0.95rem; font-weight: 600; }
+h3 { font-size: 0.9rem;  font-weight: 600; }
+h4 { font-size: 0.8rem;  font-weight: 600; }
+p  { font-size: 0.85rem; }
+
+/* ── Surface card ────────────────────────────────────────────── */
+.glass-panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+/* ── Buttons ─────────────────────────────────────────────────── */
+button {
+  cursor: pointer; border: none; background: none;
+  font-family: inherit; color: var(--text-primary);
+  transition: var(--transition); font-size: 0.85rem;
+}
+
+.primary-btn {
+  background: var(--accent);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.82rem;
+  width: 100%;
+  letter-spacing: 0.01em;
+}
+.primary-btn:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+.primary-btn:active { transform: translateY(0); }
+
+.outline-btn {
+  border: 1px solid var(--border-md);
+  padding: 0.45rem 0.9rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  background: transparent;
+  color: var(--text-secondary);
+  width: 100%;
+}
+.outline-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-md);
+}
+
+.icon-btn {
+  font-size: 1.1rem;
+  width: 34px; height: 34px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  display: inline-flex; align-items: center; justify-content: center;
+  margin-left: 0.4rem;
+}
+.icon-btn.active {
+  background: var(--accent-dim);
+  border-color: rgba(59,130,246,0.4);
+  color: var(--accent);
+}
+.icon-btn:hover { background: var(--bg-hover); border-color: var(--border-md); }
+
+.close-btn {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+.close-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+/* ── Top Bar ─────────────────────────────────────────────────── */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 1rem;
+  margin: 0.75rem 0.75rem 0;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.logo { display: flex; align-items: center; gap: 0.5rem; }
+.logo-icon { font-size: 1.2rem; }
+.logo h1 { margin: 0; }
+.logo strong { color: var(--accent); }
+
+.topbar-actions { display: flex; align-items: center; gap: 0.25rem; }
+.topbar-actions .outline-btn {
+  width: auto;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+/* ── App Layout ──────────────────────────────────────────────── */
+.app-content {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0.75rem;
+  gap: 0.75rem;
+}
+
+/* Map: fills remaining space */
+.map-section {
+  flex: 1;
+  position: relative;
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  min-width: 0;
+  box-shadow: var(--shadow-md);
+}
+
+/* Map inner SVG wrapper */
+.map-wrapper { width: 100%; height: 100%; position: relative; }
+
+/* Right Panel: fixed width, unified surface */
+.right-panel {
+  flex: 0 0 288px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+}
+
+/* Widget sections stacked inside panel */
+.widget-section {
+  display: flex;
+  flex-direction: column;
+  padding: 0.875rem 1rem;
+  flex-shrink: 0;
+}
+.widget-section + .widget-section {
+  border-top: 1px solid var(--border);
+}
+.widget-section.wait-times-panel {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Section label */
+.widget-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.6rem;
+}
+
+/* ── Wait Times ──────────────────────────────────────────────── */
+.wait-list {
+  display: flex; flex-direction: column; gap: 0; flex: 1;
+  overflow-y: auto; margin-top: 0; padding-right: 2px;
+}
+.wait-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.wait-item:last-child { border-bottom: none; }
+.wait-name { font-size: 0.82rem; color: var(--text-secondary); }
+.wait-val {
+  font-size: 0.75rem; font-weight: 700;
+  padding: 0.18rem 0.5rem; border-radius: 4px;
+  background: var(--bg-raised);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+/* ── Smart Suggestions ───────────────────────────────────────── */
+.suggestion-list { display: flex; flex-direction: column; gap: 0.4rem; margin: 0; }
+.suggestion-list li {
+  display: flex; gap: 0.5rem; align-items: flex-start;
+  font-size: 0.78rem; line-height: 1.4; color: var(--text-secondary);
+  padding: 0.4rem 0.5rem;
+  background: var(--bg-raised);
+  border-radius: var(--radius-sm);
+  border-left: 2px solid var(--yellow);
+}
+.suggestion-icon { flex-shrink: 0; }
+
+/* ── Route Finder form ───────────────────────────────────────── */
+.helper-text {
+  font-size: 0.75rem; color: var(--text-muted); line-height: 1.35;
+  margin-bottom: 0.6rem;
+}
+.route-inputs { display: flex; flex-direction: column; gap: 0.45rem; }
+.input-group  { display: flex; flex-direction: column; gap: 0.25rem; }
+.input-group label {
+  font-size: 0.68rem; font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.07em;
+}
+select {
+  background: var(--bg-raised);
+  border: 1px solid var(--border-md);
+  color: var(--text-primary);
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius-sm);
+  outline: none; width: 100%;
+  font-size: 0.82rem; font-family: inherit; cursor: pointer;
+  transition: var(--transition);
+}
+select:hover, select:focus { border-color: var(--accent); }
+select option { background: var(--bg-raised); }
+
+/* ── Status badge (active route) ─────────────────────────────── */
+.route-badge {
+  display: flex; align-items: center; gap: 0.35rem;
+  font-size: 0.68rem; font-weight: 700;
+  color: var(--accent);
+  background: var(--accent-dim);
+  border: 1px solid rgba(59,130,246,0.3);
+  padding: 0.2rem 0.5rem; border-radius: 20px;
+  letter-spacing: 0.05em;
+}
+.route-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent);
+  animation: blinkDot 1.4s ease-in-out infinite;
+}
+@keyframes blinkDot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+
+/* ── SVG Map ─────────────────────────────────────────────────── */
+#heatmap-layer {
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+#heatmap-layer.heatmap-dimmed { opacity: 0.2; }
+#route-layer  { pointer-events: none; }
+
+.zone-block {
+  fill: rgba(34,197,94,0.25);
+  stroke: rgba(255,255,255,0.08);
+  stroke-width: 1.5px;
+  transition: fill 1.2s ease, fill-opacity 1s ease;
+  rx: 14;
+}
+.zone-block:hover {
+  stroke: rgba(255,255,255,0.35);
+  stroke-width: 2px;
+  cursor: pointer;
+  filter: brightness(1.15);
+}
+.zone-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px; font-weight: 600;
+  letter-spacing: 0.07em;
+  pointer-events: none;
+  fill: rgba(255,255,255,0.75);
+  text-shadow: none;
+}
+.zone-overlay-border {
+  stroke: rgba(255,255,255,0.12);
+  stroke-width: 1px;
+  fill: none;
+}
+
+/* Risky zone — subtle pulse, no harsh glow */
+.risky-zone {
+  animation: pulseRisky 1.6s ease-in-out infinite alternate !important;
+}
+@keyframes pulseRisky {
+  0%   { fill-opacity: 0.7; }
+  100% { fill-opacity: 1;   }
+}
+
+/* Zone selected / dimmed states */
+.stadium-container.dimmed-mode .zone-block          { opacity: 0.25 !important; }
+.stadium-container.dimmed-mode .zone-block.active   {
+  opacity: 1 !important;
+  stroke: rgba(255,255,255,0.5) !important;
+  stroke-width: 2px !important;
+}
+
+/* Route path line */
+.path-line {
+  stroke: var(--accent); stroke-width: 2.5;
+  fill: none;
+  stroke-dasharray: 8 6;
+  animation: dash 18s linear infinite;
+  opacity: 0.9;
+}
+.path-line.smart-route {
+  stroke: var(--yellow); stroke-width: 2.5;
+  stroke-dasharray: 10 8;
+  animation: marchDots 1.2s linear infinite;
+}
+@keyframes dash       { to { stroke-dashoffset: -100; } }
+@keyframes marchDots  { to { stroke-dashoffset: -18;  } }
+
+/* Warning icon on map */
+.warning-icon { animation: bounceWarning 1.2s ease-in-out infinite alternate; }
+@keyframes bounceWarning {
+  0%   { transform: translateY(-3px); }
+  100% { transform: translateY(3px);  }
+}
+
+/* ── Hover Tooltip ───────────────────────────────────────────── */
+.zone-tooltip {
+  position: fixed;
+  pointer-events: none;
+  z-index: 5000;
+  padding: 0.75rem 1rem;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  min-width: 180px;
+  transform: translate(-50%, calc(-100% - 12px));
+}
+.zone-tooltip h4 { font-size: 0.85rem; color: var(--text-primary); margin-bottom: 0.4rem; }
+.tt-metric      { font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 0.15rem; }
+.tt-suggestion  { margin-top: 0.5rem; font-size: 0.75rem; color: var(--text-muted); font-style: italic; }
+
+/* ── Zone Details Sidebar (off-canvas on map) ────────────────── */
+.zone-details-sidebar {
+  position: absolute; top: 0; left: 0;
+  width: 300px; height: 100%; z-index: 100;
+  background: var(--bg-raised);
+  border-right: 1px solid var(--border-md);
+  padding: 1.5rem; display: flex; flex-direction: column;
+  transform: translateX(0);
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: var(--shadow-lg);
+}
+.zone-details-sidebar.hidden { transform: translateX(-100%); }
+.sidebar-header {
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.75rem; margin-bottom: 1.25rem;
+}
+.zd-body  { display: flex; flex-direction: column; gap: 1.25rem; }
+.kpi-mini span { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; }
+.kpi-mini h3   { font-size: 1.6rem; font-weight: 700; margin-top: 0.2rem; }
+.trend-bar  { width: 100%; height: 5px; background: var(--bg-base); border-radius: 3px; overflow: hidden; margin-top: 0.4rem; }
+.trend-fill { height: 100%; transition: width 0.8s ease, background 0.8s ease; border-radius: 3px; }
+.zd-desc   { font-size: 0.82rem; line-height: 1.55; color: var(--text-secondary); }
+
+/* ── Alert Toast (top-right, non-blocking) ───────────────────── */
+.alert-container {
+  position: fixed;
+  top: 1rem; right: 1rem;
+  display: flex; flex-direction: column; gap: 0.5rem;
+  z-index: 9999; pointer-events: none;
+  max-width: 340px; width: 100%;
+}
+.alert-toast {
+  pointer-events: auto;
+  background: var(--bg-raised);
+  border: 1px solid rgba(239,68,68,0.4);
+  border-left: 3px solid var(--red);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  display: flex; align-items: flex-start; gap: 0.625rem;
+  box-shadow: var(--shadow-lg);
+  animation: toastIn 0.25s ease forwards;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.alert-toast.removing { opacity: 0; transform: translateX(20px); }
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.alert-toast .alert-icon   { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+.alert-toast .alert-message {
+  flex: 1; font-size: 0.8rem; font-weight: 500;
+  color: var(--text-primary); line-height: 1.4;
+}
+
+/* ── Chatbot ─────────────────────────────────────────────────── */
+.chatbot-wrapper {
+  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 200;
+}
+.chat-fab {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--accent);
+  font-size: 1.1rem;
+  box-shadow: var(--shadow-md);
+  display: flex; justify-content: center; align-items: center;
+  border: none; cursor: pointer; transition: var(--transition);
+}
+.chat-fab:hover { background: var(--accent-hover); transform: translateY(-2px); }
+.chat-window {
+  position: absolute; bottom: 56px; right: 0; width: 300px;
+  display: flex; flex-direction: column; overflow: hidden;
+  background: var(--bg-surface); border: 1px solid var(--border-md);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
+  transform-origin: bottom right;
+  animation: popIn 0.2s ease;
+}
+@keyframes popIn {
+  from { transform: scale(0.92); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+.chat-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.chat-header h4 { font-size: 0.85rem; }
+.chat-body {
+  padding: 0.75rem; height: 220px; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 0.5rem;
+}
+.message {
+  padding: 0.5rem 0.75rem; border-radius: 8px;
+  max-width: 82%; font-size: 0.8rem; line-height: 1.45;
+}
+.message.ai   { background: var(--bg-raised); border: 1px solid var(--border); align-self: flex-start; }
+.message.user { background: var(--accent); color: #fff; align-self: flex-end; }
+.chat-input   { display: flex; padding: 0.5rem; border-top: 1px solid var(--border); }
+.chat-input input {
+  flex: 1; background: transparent; border: none;
+  color: var(--text-primary); padding: 0.4rem; outline: none; font-size: 0.82rem;
+}
+.chat-input button { color: var(--accent); padding: 0.4rem 0.6rem; font-weight: 600; font-size: 0.82rem; }
+
+/* ═══════════════════════════════════════════════════════════
+   NEW — AI RECOMMENDATION CARD
+   ═══════════════════════════════════════════════════════════ */
+.ai-rec-section {
+  background: var(--bg-raised);
+  border-bottom: 1px solid var(--border) !important;
+  position: relative;
+  overflow: hidden;
+}
+/* Subtle left accent line — product-level detail */
+.ai-rec-section::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--accent);
+  border-radius: 0 2px 2px 0;
+}
+.ai-rec-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 0.35rem;
+}
+.ai-rec-action {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.3;
+  margin-bottom: 0.25rem;
+  transition: opacity 0.3s ease;
+}
+.ai-rec-reason {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  transition: opacity 0.3s ease;
+}
+/* Flash on update — barely visible, intentional */
+@keyframes aiFlash {
+  0%   { opacity: 0.4; }
+  100% { opacity: 1;   }
+}
+.ai-updating .ai-rec-action,
+.ai-updating .ai-rec-reason {
+  animation: aiFlash 0.35s ease forwards;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NEW — ROUTE METADATA STRIP
+   ═══════════════════════════════════════════════════════════ */
+.route-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--accent-dim);
+  border: 1px solid rgba(59,130,246,0.2);
+  border-radius: var(--radius-sm);
+  padding: 0.4rem 0.6rem;
+  margin-top: 0.25rem;
+  transition: opacity 0.25s ease;
+}
+.route-meta-label {
+  font-size: 0.72rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+.route-meta-eta {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NEW — SMART SUGGESTIONS — fade transition
+   ═══════════════════════════════════════════════════════════ */
+#suggestion-list-container {
+  transition: opacity 0.15s ease;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NEW — LIVING ZONES — subtle pulse for congested areas
+   ═══════════════════════════════════════════════════════════ */
+/* Override: risky-zone uses opacity pulse only, no stroke change */
+.risky-zone {
+  animation: pulseRisky 1.8s ease-in-out infinite alternate !important;
+  transform-origin: center;
+}
+@keyframes pulseRisky {
+  0%   { fill-opacity: 0.65; }
+  100% { fill-opacity: 0.95; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NEW — ROUTE PATH — draw-on then march
+   ═══════════════════════════════════════════════════════════ */
+/* Remove the old infinite dash animation from smart-route
+   since we now use JS stroke-dashoffset draw-on followed by
+   marching ants once the draw completes */
+.path-line.smart-route {
+  stroke: var(--accent);
+  stroke-width: 2.5;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.92;
+  /* march runs AFTER draw-on via JS — controlled by strokeDasharray reset */
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NEW — MICRO-INTERACTIONS
+   ═══════════════════════════════════════════════════════════ */
+/* Zone hover: lift without glow */
+.zone-block {
+  cursor: pointer;
+  transition: fill 1.2s ease, fill-opacity 1s ease, filter 0.15s ease;
+}
+.zone-block:hover {
+  filter: brightness(1.18) saturate(0.9);
+  stroke: rgba(255,255,255,0.28) !important;
+  stroke-width: 2px !important;
+}
+
+/* Button micro-interactions */
+.primary-btn { transition: background 0.15s ease, transform 0.12s ease, box-shadow 0.12s ease; }
+.outline-btn  { transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease; }
+
+/* Wait item hover */
+.wait-item {
+  transition: background 0.15s ease;
+  border-radius: 4px;
+  padding-inline: 0.25rem;
+}
+.wait-item:hover { background: var(--bg-hover); }
+
+/* Section dividers — remove hard borders, use spacing instead */
+.widget-section + .widget-section {
+  border-top: 1px solid var(--border);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NEW — BACK TO LIVE MAP BUTTON (map overlay, top-left)
+   ═══════════════════════════════════════════════════════════ */
+#map-back-btn {
+  position: absolute;
+  top: 1rem; left: 1rem;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+#map-back-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+/* ═══════════════════════════════════════════════════════════
+   STABILITY — Fixed section heights prevent layout shift
+   ═══════════════════════════════════════════════════════════ */
+
+/* AI Recommendation: fixed height so it never grows/shrinks */
+.ai-rec-section {
+  min-height: 88px;
+  flex-shrink: 0;
+}
+
+/* Smart Suggestions: fixed height with internal scroll */
+#smart-suggestions {
+  flex-shrink: 0;
+  min-height: 130px;
+  max-height: 130px;
+  overflow: hidden;
+}
+#suggestion-list-container {
+  overflow: hidden;
+  /* Remove the transition on opacity since we now do in-place updates */
+  transition: none;
+}
+
+/* Route panel: compact, fixed */
+#route-panel { flex-shrink: 0; }
+
+/* Wait times: absorbs all remaining height */
+.wait-times-panel {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.wait-list {
+  overflow-y: auto;
+  flex: 1;
+  /* Styled scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-md) transparent;
+}
+.wait-list::-webkit-scrollbar       { width: 4px; }
+.wait-list::-webkit-scrollbar-track { background: transparent; }
+.wait-list::-webkit-scrollbar-thumb { background: var(--border-md); border-radius: 2px; }
+
+/* ═══════════════════════════════════════════════════════════
+   MOTION — Suggestion items (fixed nodes, text updates)
+   ═══════════════════════════════════════════════════════════ */
+.sug-item {
+  display: flex;
+  gap: 0.4rem;
+  align-items: flex-start;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  padding: 0.4rem 0.5rem;
+  background: var(--bg-raised);
+  border-radius: var(--radius-sm);
+  border-left: 2px solid var(--yellow);
+  margin-bottom: 0.35rem;
+  /* Base transition — always smooth */
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.sug-item:last-child { margin-bottom: 0; }
+
+/* When text is being swapped — brief dim + micro-lift */
+.sug-item.sug-updating {
+  opacity: 0.4;
+  transform: translateY(-1px);
+}
+.suggestion-icon { flex-shrink: 0; line-height: 1; }
+.sug-text        { flex: 1; }
+
+/* ═══════════════════════════════════════════════════════════
+   MOTION — Wait time value flush
+   ═══════════════════════════════════════════════════════════ */
+.wait-val {
+  /* Always transition color */
+  transition: color 0.3s ease, background 0.3s ease, opacity 0.18s ease;
+}
+.wait-val.val-updating { opacity: 0.3; }
+
+/* ═══════════════════════════════════════════════════════════
+   MOTION — AI Recommendation card flash
+   ═══════════════════════════════════════════════════════════ */
+@keyframes aiFlash {
+  0%   { opacity: 0.35; transform: translateY(1px); }
+  100% { opacity: 1;    transform: translateY(0);   }
+}
+.ai-updating .ai-rec-action,
+.ai-updating .ai-rec-reason {
+  animation: aiFlash 0.32s ease forwards;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MOTION — Global consistency (8px grid timing ladder)
+   ─────────────────────────────────────────────────────────
+   Tier 1 — Instant feedback:  100ms  (hover, active)
+   Tier 2 — Data updates:      200ms  (value changes)
+   Tier 3 — State changes:     300ms  (panel show/hide)
+   Tier 4 — Layout changes:    400ms  (route mode transition)
+   ═══════════════════════════════════════════════════════════ */
+button           { transition: background 0.1s ease, color 0.1s ease,
+                               border-color 0.1s ease, transform 0.1s ease,
+                               box-shadow 0.1s ease; }
+.zone-block      { transition: fill 1.4s ease, fill-opacity 1.2s ease,
+                               filter 0.15s ease, stroke 0.15s ease,
+                               stroke-width 0.15s ease; }
+.wait-item       { transition: background 0.1s ease; }
+select           { transition: border-color 0.1s ease; }
+.route-meta      { transition: opacity 0.25s ease; }
+#heatmap-layer   { transition: opacity 0.5s ease; }
+
+/* ═══════════════════════════════════════════════════════════
+   POLISH — Scrollbar global (WebKit)
+   ═══════════════════════════════════════════════════════════ */
+::-webkit-scrollbar       { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-md); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ═══════════════════════════════════════════════════════════
+   POLISH — Text selection
+   ═══════════════════════════════════════════════════════════ */
+::selection {
+  background: var(--accent-dim);
+  color: var(--text-primary);
+}

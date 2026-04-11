@@ -1,0 +1,187 @@
+/* ============================================================
+   ADMIN DASHBOARD — Design System
+   Inherits tokens from style.css, extends for admin layout
+   ============================================================ */
+
+/* Admin layout: sidebar + main content side by side */
+.admin-body {
+  flex-direction: row;
+  overflow: hidden;
+  height: 100vh;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────────── */
+.sidebar {
+  width: 220px;
+  height: calc(100vh - 1.5rem);
+  margin: 0.75rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  border-radius: var(--radius-lg);
+}
+
+.sidebar .logo { margin-bottom: 0.5rem; }
+.sidebar .logo h2 { font-size: 1rem; font-weight: 600; margin: 0; }
+
+.sidebar-nav {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+.sidebar-nav a {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+  display: block;
+}
+.sidebar-nav a:hover, .sidebar-nav a.active {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+.sidebar-nav a.outline-btn {
+  border: 1px solid var(--border-md);
+  text-align: center;
+  color: var(--text-secondary);
+  background: transparent;
+  margin-top: auto;
+  width: 100%;
+  padding: 0.45rem 0.75rem;
+}
+.sidebar-nav a.outline-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+.small-btn { font-size: 0.8rem; }
+.mt-auto   { margin-top: auto; }
+
+/* ── Main Dashboard Content ──────────────────────────────────── */
+.dashboard-content {
+  flex: 1;
+  padding: 0.75rem 0.75rem 0.75rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  overflow-y: auto;
+  min-width: 0;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  flex-shrink: 0;
+}
+.dashboard-header h1 { font-size: 1.1rem; font-weight: 600; }
+
+/* Online status pill */
+.status-indicator {
+  display: flex; align-items: center; gap: 0.4rem;
+  font-size: 0.78rem; font-weight: 600;
+  padding: 0.3rem 0.75rem;
+  background: var(--green-dim);
+  color: var(--green);
+  border-radius: 20px;
+  border: 1px solid rgba(34,197,94,0.25);
+}
+.dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.dot.green { background: var(--green); }
+.animated-pulse { animation: dotPulse 2.5s ease-in-out infinite; }
+@keyframes dotPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}
+
+/* ── KPI Grid ────────────────────────────────────────────────── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+.kpi-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.1rem 1.25rem;
+  box-shadow: var(--shadow-sm);
+}
+.kpi-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 0.4rem;
+}
+.kpi-card h3 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.25rem;
+  line-height: 1;
+}
+.kpi-trend {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.kpi-trend.positive { color: var(--green); }
+.kpi-trend.negative { color: var(--red); }
+
+/* ── Charts Section ──────────────────────────────────────────── */
+.charts-section {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 0.75rem;
+  flex: 1;
+  min-height: 0;
+}
+.chart-card, .alerts-log {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.1rem 1.25rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.chart-card h3, .alerts-log h3 {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 0.75rem;
+  flex-shrink: 0;
+}
+.chart-container {
+  flex: 1; position: relative; min-height: 180px;
+}
+
+/* ── Alerts Log ──────────────────────────────────────────────── */
+.alerts-log ul {
+  display: flex; flex-direction: column; gap: 0.4rem;
+  overflow-y: auto; flex: 1; min-height: 0;
+}
+.alert-item {
+  display: flex; flex-direction: column;
+  padding: 0.65rem 0.75rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-left: 3px solid transparent;
+}
+.alert-item.warning { border-left-color: var(--red); }
+.alert-item.info    { border-left-color: var(--accent); }
+.alert-item .time   { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 0.2rem; }
+.alert-item .msg    { font-size: 0.82rem; font-weight: 500; color: var(--text-secondary); }

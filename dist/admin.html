@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CrowdSense AI - Admin Dashboard</title>
+  <meta name="description" content="Predictive crowd congestion metrics and operations dashboard." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <script type="module" crossorigin src="/assets/admin-Bnb_7S2w.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/simulation-D_nIdfiU.js">
+  <link rel="stylesheet" crossorigin href="/assets/simulation-C11wreLg.css">
+  <link rel="stylesheet" crossorigin href="/assets/admin-BvVs1llT.css">
+</head>
+<body class="admin-body">
+  <aside class="sidebar glass-panel">
+    <div class="logo">
+      <span class="logo-icon">✨</span>
+      <h2>CrowdSense <strong>Ops</strong></h2>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#" class="active">Dashboard</a>
+      <a href="#">Alerts</a>
+      <a href="/index.html" class="outline-btn small-btn mt-auto">⟵ Back to Map</a>
+    </nav>
+  </aside>
+
+  <main class="dashboard-content">
+    <header class="dashboard-header">
+      <h1>Operational Overview</h1>
+      <div class="status-indicator">
+        <span class="dot green animated-pulse"></span>
+        System Online
+      </div>
+    </header>
+
+    <div class="kpi-grid">
+      <div class="kpi-card glass-panel">
+        <span class="kpi-label">Total Attendance</span>
+        <h3 id="kpi-attendance">54,230</h3>
+        <span class="kpi-trend positive">↑ 2%</span>
+      </div>
+      <div class="kpi-card glass-panel">
+        <span class="kpi-label">Current Density (Avg)</span>
+        <h3 id="kpi-density">Moderate</h3>
+        <span class="kpi-trend">Stable</span>
+      </div>
+      <div class="kpi-card glass-panel">
+        <span class="kpi-label">Active Alerts</span>
+        <h3 id="kpi-alerts" class="text-danger">2</h3>
+        <span class="kpi-trend negative">Requires attention</span>
+      </div>
+    </div>
+
+    <div class="charts-section">
+      <div class="chart-card glass-panel">
+        <h3>Predictive Congestion (Next 60 Mins)</h3>
+        <div class="chart-container">
+          <canvas id="predictionChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="alerts-log glass-panel">
+        <h3>Live AI Observations</h3>
+        <ul id="alerts-list">
+          <li class="alert-item warning">
+            <span class="time">15:42</span>
+            <span class="msg">Congestion building at Gate C</span>
+          </li>
+          <li class="alert-item info">
+             <span class="time">15:30</span>
+             <span class="msg">Food Court 2 wait time decreased</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>

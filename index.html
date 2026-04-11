@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CrowdSense AI - Live Attendee Map</title>
+  <meta name="description" content="Live stadium map, crowd congestion tracker, and optimal routes for attendees." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/css/style.css" />
+</head>
+
+<body>
+  <!-- Header / Navigation -->
+  <header class="topbar glass-panel">
+    <div class="logo">
+      <span class="logo-icon">🏟️</span>
+      <h1>CrowdSense <strong>AI</strong></h1>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn active" title="Heatmap" id="btn-heatmap">🌡️</button>
+      <button class="icon-btn" title="Routing" id="btn-routing">🗺️</button>
+      <a href="/admin.html" class="outline-btn">Admin Dashboard</a>
+    </div>
+  </header>
+
+  <!-- Off-Canvas Zone Details Sidebar -->
+  <aside id="zone-details-sidebar" class="zone-details-sidebar glass-panel hidden">
+    <div class="sidebar-header">
+      <h2 id="zd-title">Zone Name</h2>
+      <button id="zd-close-btn" class="close-btn">✖</button>
+    </div>
+    <div class="zd-body">
+      <div class="kpi-mini">
+        <span>Current Density</span>
+        <h3 id="zd-density" class="text-success">--%</h3>
+      </div>
+      <div class="kpi-mini" id="zd-wait-container">
+        <span>Wait Time</span>
+        <h3 id="zd-wait">--</h3>
+      </div>
+      <div class="kpi-chart">
+        <span>Recent Trend</span>
+        <div class="trend-bar">
+          <div class="trend-fill" id="zd-trend"></div>
+        </div>
+      </div>
+      <p id="zd-suggestion" class="zd-desc">...</p>
+    </div>
+  </aside>
+
+  <!-- SaaS Floating Alert/Toast Overlay Container -->
+  <div id="alert-container" class="alert-container"></div>
+
+  <div class="app-content">
+    <main class="map-section stadium-container">
+      <!-- SVG Stadium Map Container -->
+      <div class="map-wrapper" id="stadium-map">
+        <!-- Persistent route-mode back button — top-left of map, hidden by default -->
+        <button id="map-back-btn" class="hidden">← Live Map</button>
+
+        <!-- Master SVG architecture -->
+        <svg id="stadium-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600"
+          preserveAspectRatio="xMidYMid meet" style="width: 100%; height: 100%;">
+
+          <defs>
+            <radialGradient id="stadium-glow" cx="50%" cy="50%" r="55%">
+              <stop offset="0%" stop-color="rgba(59,130,246,0.04)" />
+              <stop offset="100%" stop-color="transparent" />
+            </radialGradient>
+
+            <!-- Grid Texture for Field -->
+            <pattern id="pitch-grid" width="30" height="30" patternUnits="userSpaceOnUse">
+              <path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1.5" />
+            </pattern>
+
+            <!-- Subtle Diagonal Pattern for Zones -->
+            <pattern id="zone-texture" width="12" height="12" patternUnits="userSpaceOnUse"
+              patternTransform="rotate(45)">
+              <rect width="6" height="12" fill="rgba(0,0,0,0.2)" />
+              <rect x="6" width="6" height="12" fill="rgba(255,255,255,0.03)" />
+            </pattern>
+
+            <!-- Grand Drop Shadow -->
+            <filter id="stadium-shadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="12" stdDeviation="15" flood-color="#000" flood-opacity="0.8" />
+            </filter>
+
+            <!-- Zone Drop Shadow -->
+            <filter id="zone-shadow" x="-30%" y="-30%" width="160%" height="160%">
+              <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000" flood-opacity="0.6" />
+            </filter>
+          </defs>
+
+          <!-- Stadium Foundation Background -->
+          <g>
+            <rect x="10" y="5" width="980" height="590" rx="40" fill="#0d1117"></rect>
+            <rect x="10" y="5" width="980" height="590" rx="40" fill="url(#stadium-glow)" pointer-events="none"></rect>
+            <rect x="10" y="5" width="980" height="590" rx="40" fill="none"
+              stroke="rgba(255,255,255,0.04)" stroke-width="1.5" pointer-events="none"></rect>
+          </g>
+
+          <!-- Central Field -->
+          <g>
+            <rect class="stadium-pitch" x="280" y="150" width="440" height="300" rx="140" fill="#0f2318"></rect>
+            <rect class="stadium-pitch-texture" x="280" y="150" width="440" height="300" rx="140"
+              fill="url(#pitch-grid)" pointer-events="none"></rect>
+            <rect x="280" y="150" width="440" height="300" rx="140" fill="none"
+              stroke="rgba(255,255,255,0.07)" stroke-width="2" pointer-events="none"></rect>
+          </g>
+          <text x="500" y="300" class="pitch-label" fill="rgba(255,255,255,0.25)" text-anchor="middle"
+            dominant-baseline="middle" font-size="18" font-weight="700" letter-spacing="8"
+            font-family="'Outfit',sans-serif" pointer-events="none">PITCH</text>
+
+          <!-- Architectural Zones -->
+          <g id="heatmap-layer">
+            <!-- Gate A (West) -->
+            <g filter="url(#zone-shadow)">
+              <rect id="zone-gate_a" class="zone-block" x="50" y="200" width="100" height="200" rx="16"></rect>
+              <rect x="50" y="200" width="100" height="200" rx="16" fill="url(#zone-texture)" pointer-events="none">
+              </rect>
+              <rect x="50" y="200" width="100" height="200" rx="16" fill="none" class="zone-overlay-border"
+                pointer-events="none"></rect>
+            </g>
+            <text id="label-gate_a" x="100" y="300" class="zone-label" fill="#fff" text-anchor="middle"
+              dominant-baseline="middle">Gate A</text>
+
+            <!-- Gate B (East) -->
+            <g filter="url(#zone-shadow)">
+              <rect id="zone-gate_b" class="zone-block" x="850" y="200" width="100" height="200" rx="16"></rect>
+              <rect x="850" y="200" width="100" height="200" rx="16" fill="url(#zone-texture)" pointer-events="none">
+              </rect>
+              <rect x="850" y="200" width="100" height="200" rx="16" fill="none" class="zone-overlay-border"
+                pointer-events="none"></rect>
+            </g>
+            <text id="label-gate_b" x="900" y="300" class="zone-label" fill="#fff" text-anchor="middle"
+              dominant-baseline="middle">Gate B</text>
+
+            <!-- Section 101 (North) -->
+            <g filter="url(#zone-shadow)">
+              <rect id="zone-section_101" class="zone-block" x="300" y="20" width="400" height="80" rx="24"></rect>
+              <rect x="300" y="20" width="400" height="80" rx="24" fill="url(#zone-texture)" pointer-events="none">
+              </rect>
+              <rect x="300" y="20" width="400" height="80" rx="24" fill="none" class="zone-overlay-border"
+                pointer-events="none"></rect>
+            </g>
+            <text id="label-section_101" x="500" y="60" class="zone-label" fill="#fff" text-anchor="middle"
+              dominant-baseline="middle">Section 101</text>
+
+            <!-- Section 205 (South) -->
+            <g filter="url(#zone-shadow)">
+              <rect id="zone-section_205" class="zone-block" x="300" y="500" width="400" height="80" rx="24"></rect>
+              <rect x="300" y="500" width="400" height="80" rx="24" fill="url(#zone-texture)" pointer-events="none">
+              </rect>
+              <rect x="300" y="500" width="400" height="80" rx="24" fill="none" class="zone-overlay-border"
+                pointer-events="none"></rect>
+            </g>
+            <text id="label-section_205" x="500" y="540" class="zone-label" fill="#fff" text-anchor="middle"
+              dominant-baseline="middle">Section 205</text>
+
+            <!-- Restroom North (North West) -->
+            <g filter="url(#zone-shadow)">
+              <rect id="zone-restroom_north" class="zone-block" x="50" y="20" width="200" height="80" rx="16"></rect>
+              <rect x="50" y="20" width="200" height="80" rx="16" fill="url(#zone-texture)" pointer-events="none">
+              </rect>
+              <rect x="50" y="20" width="200" height="80" rx="16" fill="none" class="zone-overlay-border"
+                pointer-events="none"></rect>
+            </g>
+            <text id="label-restroom_north" x="150" y="60" class="zone-label" fill="#fff" text-anchor="middle"
+              dominant-baseline="middle">Restrooms N</text>
+
+            <!-- Food Court (South East) -->
+            <g filter="url(#zone-shadow)">
+              <rect id="zone-food_court" class="zone-block" x="750" y="500" width="200" height="80" rx="16"></rect>
+              <rect x="750" y="500" width="200" height="80" rx="16" fill="url(#zone-texture)" pointer-events="none">
+              </rect>
+              <rect x="750" y="500" width="200" height="80" rx="16" fill="none" class="zone-overlay-border"
+                pointer-events="none"></rect>
+            </g>
+            <text id="label-food_court" x="850" y="540" class="zone-label" fill="#fff" text-anchor="middle"
+              dominant-baseline="middle">Food Court</text>
+          </g>
+
+          <!-- Particle SMIL Crowd Flow Layer -->
+          <g id="flow-layer"></g>
+
+          <!-- Routes Layer on Top -->
+          <g id="route-layer"></g>
+
+          <!-- Dynamic Warnings Layer on Top -->
+          <g id="warning-layer"></g>
+        </svg>
+      </div>
+    </main>
+
+    <!-- Fixed Right Data Column — unified glass panel -->
+    <aside class="right-panel glass-panel">
+
+      <!-- SECTION 0: AI Primary Recommendation -->
+      <div class="widget-section ai-rec-section" id="ai-recommendation">
+        <div class="ai-rec-label">Best Action Right Now</div>
+        <div class="ai-rec-action" id="ai-action">Analyzing crowd data…</div>
+        <div class="ai-rec-reason" id="ai-reason">Loading intelligence…</div>
+      </div>
+
+      <!-- Section 1: Smart Suggestions -->
+      <div class="widget-section" id="smart-suggestions">
+        <h4 class="widget-title">Smart Suggestions ⚡</h4>
+        <ul class="suggestion-list" id="suggestion-list-container">
+          <li><span class="suggestion-icon">💡</span> Analyzing best routes...</li>
+        </ul>
+      </div>
+
+      <!-- Section 2: Route Finder -->
+      <div class="widget-section" id="route-panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+          <h4 class="widget-title" style="margin:0;">Find Path</h4>
+          <span id="route-mode-badge" class="route-badge hidden"><span class="route-dot"></span> Active</span>
+        </div>
+        <p class="helper-text">Select origin &amp; destination to plot the least-congested path.</p>
+        <div class="route-inputs">
+          <div class="input-group">
+            <label for="route-start">📍 Start</label>
+            <select id="route-start">
+              <option value="gate_a">Gate A</option>
+              <option value="section_101">Section 101</option>
+              <option value="food_court">Food Court</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="route-end">🏁 Destination</label>
+            <select id="route-end">
+              <option value="restroom_north">Restroom N.</option>
+              <option value="gate_b">Gate B</option>
+              <option value="section_205">Section 205</option>
+            </select>
+          </div>
+          <button id="find-route-btn" class="primary-btn">Plot Optimal Route</button>
+          <button id="btn-clear-route" class="outline-btn text-warning hidden">← Back to Live Map</button>
+          <!-- Route metadata (shown after route is plotted) -->
+          <div id="route-meta" class="route-meta hidden">
+            <span class="route-meta-label">Least crowded route</span>
+            <span id="route-eta" class="route-meta-eta">--</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Wait Times (fills remaining height, scrolls internally) -->
+      <div class="widget-section wait-times-panel" id="wait-times">
+        <h4 class="widget-title">Live Wait Times</h4>
+        <ul class="wait-list" id="wait-list-container"></ul>
+      </div>
+
+    </aside>
+  </div>
+
+  <!-- Floating Hover Tooltip -->
+  <div id="zone-tooltip" class="zone-tooltip hidden glass-panel">
+    <h4 id="tt-title">Zone Name</h4>
+    <p class="tt-metric">Density: <strong id="tt-density">--</strong></p>
+    <p class="tt-metric hidden" id="tt-wait-container">Wait: <strong id="tt-wait">--</strong></p>
+    <p class="tt-suggestion" id="tt-suggestion">...</p>
+  </div>
+
+  <!-- Chatbot Widget -->
+  <div class="chatbot-wrapper">
+    <div class="chat-window glass-panel hidden" id="chat-window">
+      <div class="chat-header">
+        <h4>AI Assistant</h4>
+        <button id="close-chat" class="close-btn">✖</button>
+      </div>
+      <div class="chat-body" id="chat-messages">
+        <div class="message ai">Hi! How can I improve your stadium experience today?</div>
+      </div>
+      <div class="chat-input">
+        <input type="text" id="chat-input-field" placeholder="Ask about wait times, seats..." />
+        <button id="send-chat-btn">Send</button>
+      </div>
+    </div>
+    <button class="chat-fab" id="open-chat">
+      💬
+    </button>
+  </div>
+
+  <script type="module" src="/src/js/main.js"></script>
+</body>
+
+</html>
