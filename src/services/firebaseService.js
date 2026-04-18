@@ -22,6 +22,11 @@ export const firebaseService = {
    * Persists real-time crowd data (zone-specific densities).
    */
   async saveCrowdData(zones) {
+    // Basic input validation to prevent invalid state propagation
+    if (!zones || !Array.isArray(zones) || zones.length === 0) {
+      console.warn('[Firebase] saveCrowdData: invalid zones input, skipping.');
+      return null;
+    }
     try {
       const docRef = await addDoc(collection(db, "crowdLogs"), {
         zones,
@@ -38,6 +43,8 @@ export const firebaseService = {
    * Fetches latest crowd data logs.
    */
   async getCrowdData(count = 10) {
+    // Basic input validation — count must be a positive integer
+    if (typeof count !== 'number' || count < 1) count = 10;
     try {
       const q = query(collection(db, "crowdLogs"), orderBy("timestamp", "desc"), limit(count));
       const querySnapshot = await getDocs(q);
@@ -52,6 +59,11 @@ export const firebaseService = {
    * Logs AI trend predictions for future audit and model refinement.
    */
   async logPrediction(prediction) {
+    // Basic input validation to prevent empty or malformed log entries
+    if (!prediction || typeof prediction !== 'object') {
+      console.warn('[Firebase] logPrediction: invalid prediction input, skipping.');
+      return;
+    }
     try {
       await addDoc(collection(db, "predictionLogs"), {
         ...prediction,
@@ -66,7 +78,8 @@ export const firebaseService = {
    * Triggers a system alert in Firestore if high density thresholds are breached.
    */
   async triggerAlertIfHighDensity(zones, threshold = 0.85) {
-    const congestedZones = zones.filter(z => z.density >= threshold);
+    if (!zones || !Array.isArray(zones)) return;
+    const congestedZones = zones.filter(z => z && typeof z.density === 'number' && z.density >= threshold);
     if (congestedZones.length === 0) return;
 
     try {
@@ -82,5 +95,32 @@ export const firebaseService = {
     } catch (error) {
       console.error("Firebase Error (triggerAlert):", error);
     }
+  },
+
+  /**
+   * Logs a structured analytics event to the systemEvents collection.
+   * Used for routing decisions, prediction audits, and emergency activations.
+   *
+   * @param {{ type: string, metadata: object }} event
+   */
+  async logSystemEvent(event) {
+    // Basic input validation to prevent malformed analytics entries
+    if (!event || !event.type || typeof event.type !== 'string') {
+      console.warn('[Firebase] logSystemEvent: invalid event, skipping.');
+      return;
+    }
+    const entry = {
+      type: event.type,
+      timestamp: Date.now(),
+      metadata: event.metadata || {},
+      serverTimestamp: serverTimestamp(),
+    };
+    console.log(`[Analytics] ${event.type}`, entry.metadata);
+    try {
+      await addDoc(collection(db, "systemEvents"), entry);
+    } catch (error) {
+      console.error("Firebase Error (logSystemEvent):", error);
+    }
   }
 };
+

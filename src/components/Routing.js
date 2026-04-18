@@ -41,7 +41,10 @@ export class Routing {
     return Math.sqrt(dx * dx + dy * dy);
   }
 
-  // Exit nodes — used during emergency to bias routing toward gates
+  // Exit nodes — used during emergency to bias routing toward gates.
+  // EMERGENCY WEIGHT STRATEGY: blocked zones receive +50000 (impassable),
+  // exit nodes receive -500 (attraction), and all density penalties are
+  // multiplied 3× to aggressively steer foot traffic toward gates.
   static EXIT_NODES = new Set(['gate_a', 'gate_b']);
 
   getWeight(n1, n2) {
@@ -106,9 +109,22 @@ export class Routing {
   }
 
   calculatePath(startId, endId) {
+    // Basic input validation to prevent invalid state propagation
+    if (!startId || !endId || typeof startId !== 'string' || typeof endId !== 'string') {
+      console.warn('[Routing] Invalid input — startId and endId must be non-empty strings.');
+      return [];
+    }
+    if (!this.nodes[startId] || !this.nodes[endId]) {
+      console.warn(`[Routing] Unknown node: ${!this.nodes[startId] ? startId : endId}`);
+      return [];
+    }
+
     // Check cache first
     const cached = routeCache.get(startId, endId);
     if (cached) return cached;
+
+    // Performance instrumentation — measure Dijkstra traversal time
+    const t0 = performance.now();
 
     const path = calculateDijkstraPath(
       startId, 
@@ -117,6 +133,9 @@ export class Routing {
       this.edges, 
       (n1, n2) => this.getWeight(n1, n2)
     );
+
+    const t1 = performance.now();
+    console.log(`⚡ Route computation time: ${(t1 - t0).toFixed(2)} ms [${startId} → ${endId}]`);
 
     // Save to cache
     if (path.length > 0) {

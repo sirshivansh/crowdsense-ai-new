@@ -21,7 +21,11 @@ document.addEventListener('DOMContentLoaded', () => {
   waitTimes.update(simulator.state.waitTimes);
   updateAIRecommendation(simulator.state);
 
-  // ── Simulator bindings
+  // ── Simulator event bindings
+  // EVENT-DRIVEN ARCHITECTURE: the simulator emits events on a fixed cadence
+  // (3s heatmap, 5s wait times, 8s alerts). Each listener triggers a cascade:
+  //   simulator → AI predictor → routing weight recalc → Firebase persistence
+  // This decoupled pipeline ensures no component depends on another's internals.
   simulator.on('update:heatmap', async (zones) => {
     heatmap.update(zones);
     updateAIRecommendation(simulator.state);
@@ -323,7 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Invalidate route cache — weights have changed
     routeCache.clear();
 
-    // 3. Log to Firebase
+    // 3. Log to Firebase — structured analytics + prediction audit
     if (emergencyActive) {
       firebaseService.logPrediction({
         type: 'emergency',
@@ -331,6 +335,15 @@ document.addEventListener('DOMContentLoaded', () => {
         confidence: 1.0,
       });
       firebaseService.triggerAlertIfHighDensity(simulator.state.zones, 0.7);
+      firebaseService.logSystemEvent({
+        type: 'emergency',
+        metadata: { action: 'activated', blockedZones: [...simulator.blockedZones] }
+      });
+    } else {
+      firebaseService.logSystemEvent({
+        type: 'emergency',
+        metadata: { action: 'deactivated' }
+      });
     }
 
     // 4. Update button state
