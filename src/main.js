@@ -399,6 +399,7 @@ try {
     } else {
       if (emergencyActive) emergencyBtn?.click();
       simulator.simulateScenario('normal');
+    }
   });
 
   // Staff Mode Toggle (Task: Perfect Alignment)
