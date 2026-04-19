@@ -147,6 +147,22 @@ export class UIController {
       }
     });
   }
+  /**
+   * Toggles the high-fidelity operations HUD for staff.
+   * @param {boolean} isStaff 
+   */
+  setTacticalView(isStaff) {
+    document.body.classList.toggle('staff-view', isStaff);
+    const container = document.querySelector('.stadium-container');
+    if (container) {
+      container.classList.add('calibrating');
+      setTimeout(() => container.classList.remove('calibrating'), 800);
+    }
+    
+    if (isStaff) {
+      this.showAlert('Operational HUD Active: Real-time telemetry calibration complete.');
+    }
+  }
 }
 
 export const ui = new UIController();

@@ -55,10 +55,19 @@ export class Heatmap {
       if (!el) return;
 
       const isProactivelyCongested = CongestionPredictor.predictProactiveCongestion(zone, simulator.state.historicalDensity);
+      
+      // Clear previous tactical states
+      el.classList.remove('risky-zone', 'critical-density', 'warning-density');
+
       if (isProactivelyCongested) {
         el.classList.add('risky-zone');
-      } else {
-        el.classList.remove('risky-zone');
+      }
+
+      // [New] Tactical HUD Alerts
+      if (zone.density > 0.8) {
+        el.classList.add('critical-density');
+      } else if (zone.density > 0.6) {
+        el.classList.add('warning-density');
       }
 
       const color = this.getColorForDensity(zone.density);

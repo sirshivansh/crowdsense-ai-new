@@ -404,15 +404,10 @@ try {
   // Staff Mode Toggle (Task: Perfect Alignment)
   document.getElementById('staff-mode-toggle')?.addEventListener('change', (e) => {
     const isStaff = e.target.checked;
-    document.body.classList.toggle('staff-view', isStaff);
-    Logger.info(`Switched to ${isStaff ? 'Operations' : 'Visitor'} Perspective`);
+    ui.setTacticalView(isStaff);
     
     // Immediate refresh of recommendations with extra fidelity
     updateAIRecommendation(simulator.state);
-    
-    if (isStaff) {
-      ui.showAlert('Operations Mode: High-Fidelity telemetry enabled.');
-    }
   });
 
   // Demo Mode (Task 1)
