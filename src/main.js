@@ -488,4 +488,11 @@ try {
 
     panel.classList.remove('hidden');
   }
+
+  // ── Final Startup Sync
+  populateRouteDropdowns();
+  updateSmartSuggestions(simulator.state);
+  updateMetrics(simulator.state.zones);
+  ui.setStatusPill('analytics', true);
+  ui.setStatusPill('vertex', USE_VERTEX);
 });

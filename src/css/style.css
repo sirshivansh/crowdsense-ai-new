@@ -1615,7 +1615,19 @@ body.emergency-mode .map-wrapper {
 .dot.green { background: var(--green); box-shadow: 0 0 6px var(--green); }
 .dot.grey { background: var(--text-tertiary); }
 .demo-grid { display: flex; gap: 8px; }
-.scenario-select { flex: 1; height: 32px; font-size: 11px; background: var(--bg-raised); border: 1px solid var(--border-md); border-radius: var(--r-sm); color: var(--text-primary); padding: 0 8px; }
+.scenario-select, .route-select { 
+  flex: 1; 
+  height: 32px; 
+  font-size: 11px; 
+  background: var(--bg-elevated); 
+  border: 1px solid var(--border-md); 
+  border-radius: var(--r-sm); 
+  color: var(--text-primary); 
+  padding: 0 8px;
+  cursor: pointer;
+  transition: border-color var(--t2) var(--ease);
+}
+.scenario-select:hover, .route-select:hover { border-color: var(--accent); }
 .demo-btn { background: var(--bg-elevated); border: 1px solid var(--border-md); color: var(--text-primary); height: 32px; padding: 0 12px; border-radius: var(--r-sm); font-weight: 600; font-size: 11px; white-space: nowrap; }
 .demo-btn:hover { background: var(--bg-hover); border-color: var(--accent); }
 .route-explanation { background: var(--accent-soft); border-left: 2px solid var(--accent); padding: 8px 12px; margin-top: 10px; border-radius: 0 var(--r-sm) var(--r-sm) 0; display: flex; gap: 10px; align-items: flex-start; animation: slideIn 0.3s ease; }
@@ -1632,6 +1644,8 @@ body.emergency-mode .map-wrapper {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-faint);
   margin-bottom: 12px;
 }
 
