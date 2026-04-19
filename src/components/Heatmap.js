@@ -47,12 +47,29 @@ export class Heatmap {
         el = document.getElementById(`zone-${zone.id}`);
         this.elements[zone.id] = el;
         if (el && this.tooltip) {
+          // Accessibility: Role and Tabindex
+          el.setAttribute('role', 'button');
+          el.setAttribute('tabindex', '0');
+          el.setAttribute('aria-label', `Navigate to ${zone.name}`);
+
           el.addEventListener('mousemove', (e) => this.showTooltip(e, zone.id));
           el.addEventListener('mouseleave', () => this.hideTooltip());
           el.addEventListener('click', () => this.openSidebar(zone.id));
+          
+          // Keyboard Interaction
+          el.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              this.openSidebar(zone.id);
+            }
+          });
         }
       }
       if (!el) return;
+
+      // ARIA Status Update
+      const densityPct = Math.round(zone.density * 100);
+      el.setAttribute('aria-label', `${zone.name}: ${densityPct}% occupied. Click for AI Analysis.`);
 
       const isProactivelyCongested = CongestionPredictor.predictProactiveCongestion(zone, simulator.state.historicalDensity);
       

@@ -1892,3 +1892,19 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 
+.audit-container {
+  max-height: 120px;
+  overflow-y: auto;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  scrollbar-width: none;
+  margin-top: 10px;
+}
+.audit-container::-webkit-scrollbar { display: none; }
+.audit-list { display: flex; flex-direction: column; gap: 4px; }
+.audit-row { padding: 4px 8px; background: rgba(255,255,255,0.02); border-radius: 4px; display: flex; gap: 10px; }
+.audit-time { color: var(--accent); opacity: 0.8; }
+.audit-msg { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+

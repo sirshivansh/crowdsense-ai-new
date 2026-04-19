@@ -1,11 +1,17 @@
-// Basic event emitter pattern for our simulator
+/**
+ * DataSimulator - High-fidelity crowd density and event simulator.
+ * Emits telemetry events for heatmap, wait-times, and AI predictions.
+ */
 class DataSimulator {
   constructor() {
+    /** @type {Object.<string, Function[]>} */
     this.listeners = {};
-    this.mode = 'normal'; // 'normal' | 'emergency'
+    /** @type {'normal'|'emergency'} */
+    this.mode = 'normal';
+    /** @type {Set<string>} */
     this.blockedZones = new Set();
     
-    // Initial State
+    /** @type {Object} */
     this.state = {
       attendance: 54200,
       zones: [
@@ -17,100 +23,89 @@ class DataSimulator {
         { id: 'restroom_north', name: 'North Restrooms', density: 0.6, x: 50, y: 20 },
       ],
       waitTimes: [
-        { id: 'food', name: 'Burger Stand 1', time: 15 }, // minutes
+        { id: 'food', name: 'Burger Stand 1', time: 15 },
         { id: 'rest', name: 'Restroom North', time: 5 },
         { id: 'merch', name: 'Merch Tent A', time: 25 },
       ],
       historicalDensity: Array(10).fill(0.4).map(() => Math.random() * 0.4 + 0.3)
     };
 
+    /** @type {NodeJS.Timeout[]} */
+    this._intervals = [];
     this.startSimulation();
   }
 
   /**
    * Switches the simulator into a named scenario.
-   * 'emergency' — spikes densities, blocks interior zones, fires alerts.
-   * 'normal'    — clears blocks and lets the random walk resume.
+   * @param {'normal'|'emergency'} scenario 
    */
   simulateScenario(scenario) {
+    if (!['normal', 'emergency'].includes(scenario)) return;
     this.mode = scenario;
 
     if (scenario === 'emergency') {
-      // Spike densities across all zones
       this.state.zones.forEach(zone => {
         zone.density = Math.min(1.0, zone.density + 0.3 + Math.random() * 0.2);
       });
 
-      // Block interior zones — gates stay open as exits
       this.blockedZones.clear();
       this.blockedZones.add('food_court');
       this.blockedZones.add('restroom_north');
 
-      // Immediately push updates through existing event pipeline
       this.emit('update:heatmap', this.state.zones);
-      this.emit('alert', '🚨 EMERGENCY EVACUATION — proceed to nearest exit immediately');
+      this.emit('alert', '🚨 EMERGENCY EVACUATION — proceed to nearest exit now');
+      
       this.state.zones.forEach(z => {
-        if (z.density > 0.85) {
-          this.emit('alert', `Critical density at ${z.name} — avoid this zone`);
-        }
+        if (z.density > 0.85) this.emit('alert', `Critical density at ${z.name}`);
       });
-
-      console.log('[Simulator] Emergency scenario activated');
     } else {
-      // Return to normal
       this.blockedZones.clear();
       this.emit('update:heatmap', this.state.zones);
-      console.log('[Simulator] Normal mode restored');
     }
   }
 
+  /**
+   * @param {string} event 
+   * @param {Function} callback 
+   */
   on(event, callback) {
     if (!this.listeners[event]) this.listeners[event] = [];
     this.listeners[event].push(callback);
   }
 
+  /**
+   * @param {string} event 
+   * @param {any} data 
+   */
   emit(event, data) {
     if (this.listeners[event]) {
-      this.listeners[event].forEach(cb => cb(data));
+      this.listeners[event].forEach(cb => {
+        try { cb(data); } catch (e) { console.error(`[Event: ${event}] Handler failure`, e); }
+      });
     }
   }
 
   startSimulation() {
-    // Update zones every 3 seconds
-    setInterval(() => {
+    this._intervals.push(setInterval(() => {
       this.state.zones.forEach(zone => {
-        // Random walk for densities between 0.1 and 1.0
         let change = (Math.random() - 0.5) * 0.2;
         zone.density = Math.max(0.1, Math.min(1.0, zone.density + change));
       });
       this.emit('update:heatmap', this.state.zones);
 
-      // Recalculate average historic density for chart prediction
-      const avgDensity = this.state.zones.reduce((sum, z) => sum + z.density, 0) / this.state.zones.length;
+      const avg = this.state.zones.reduce((sum, z) => sum + z.density, 0) / this.state.zones.length;
       this.state.historicalDensity.shift();
-      this.state.historicalDensity.push(avgDensity);
+      this.state.historicalDensity.push(avg);
       this.emit('update:predictions', this.state.historicalDensity);
+    }, 3000));
 
-    }, 3000);
-
-    // Update wait times every 5 seconds
-    setInterval(() => {
+    this._intervals.push(setInterval(() => {
       this.state.waitTimes.forEach(item => {
         let change = Math.floor((Math.random() - 0.5) * 3);
         item.time = Math.max(0, Math.min(45, item.time + change));
       });
       this.emit('update:waitTimes', this.state.waitTimes);
-    }, 5000);
-    
-    // Simulate alerts occasionally
-    setInterval(() => {
-      if (Math.random() > 0.7) {
-        const congestedZone = this.state.zones.find(z => z.density > 0.85);
-        if (congestedZone) {
-          this.emit('alert', `High congestion detected at ${congestedZone.name}`);
-        }
-      }
-    }, 8000);
+    }, 5000));
   }
 }
 
