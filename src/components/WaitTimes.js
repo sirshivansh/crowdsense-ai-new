@@ -10,10 +10,21 @@ export class WaitTimes {
     return 'text-danger';
   }
 
+  /**
+   * Identifies the item with the shortest wait time for AI recommendations.
+   * @returns {Object|null}
+   */
+  getShortestWait() {
+    const list = Object.values(this._rendered);
+    if (list.length === 0) return null;
+    return list.sort((a,b) => a.time - b.time)[0];
+  }
+
   update(times) {
     if (!this.container) return;
 
     times.forEach(item => {
+      this._rendered[item.id] = item; // Store for recommendations
       let li = this.container.querySelector(`[data-wait-id="${item.id}"]`);
 
       // First render: create the node once

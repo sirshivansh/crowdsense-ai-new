@@ -143,6 +143,8 @@ export function getSessionUserId() {
  * All writes are tagged with the authenticated session UID for audit compliance.
  */
 export const firebaseService = {
+  db,
+  auth,
   /**
    * Persists real-time crowd data (zone-specific densities) to Firestore.
    * Each document is tagged with the operator session UID and a server timestamp.
