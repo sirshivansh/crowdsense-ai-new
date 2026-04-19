@@ -152,6 +152,33 @@ p {
   box-shadow: var(--shadow-md);
 }
 
+.venue-selector-container {
+  margin: 0 16px;
+  flex-shrink: 0;
+}
+
+.venue-select {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  border-radius: var(--r-md);
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  outline: none;
+  font-family: inherit;
+  transition: border-color var(--t1) var(--ease);
+}
+
+.venue-select:hover {
+  border-color: var(--accent);
+}
+
+.venue-select option {
+  background: var(--surface-light);
+  color: var(--text-primary);
+}
+
 button {
   cursor: pointer;
   border: none;

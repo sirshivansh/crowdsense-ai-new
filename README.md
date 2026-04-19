@@ -113,6 +113,7 @@ CrowdSense AI integrates **9 distinct Google Cloud / Firebase services** across 
 
 | Service | Purpose | Integration Point |
 |---|---|---|
+| **Firebase Cloud Functions** | Background event-driven architecture | **processSafetyInsight** trigger (v2) for automated intelligence |
 | **Firebase Authentication** | Anonymous auth for session-tagged audit trails | `signInAnonymously()` on app init, UID attached to all Firestore writes |
 | **Cloud Firestore** | Real-time persistence for crowd logs, predictions, alerts, system events | 4 collections: `crowdLogs`, `predictionLogs`, `activeAlerts`, `systemEvents` |
 | **Google Analytics** | Custom event tracking for route calculations, emergency activations | `logEvent()` calls on route_calculated, emergency_mode_toggled, crowd_data_saved |

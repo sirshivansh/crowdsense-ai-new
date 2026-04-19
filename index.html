@@ -40,6 +40,13 @@
         <span class="att-value" id="safety-score">--</span>
       </div>
     </div>
+    <div class="venue-selector-container">
+      <select id="venue-selector" class="venue-select" aria-label="Switch between stadiums">
+        <option value="stadium-main" selected>🏟️ Main Stadium (Live)</option>
+        <option value="arena-north">🏀 North Arena (Idle)</option>
+        <option value="field-west">⚽ West Training Field (Idle)</option>
+      </select>
+    </div>
     <nav class="topbar-actions" aria-label="Main navigation">
       <button class="icon-btn active" aria-label="View heatmap of crowd density" id="btn-heatmap" aria-pressed="true">🌡️</button>
       <button class="icon-btn" aria-label="Find optimal route between zones" id="btn-routing" aria-pressed="false">🗺️</button>

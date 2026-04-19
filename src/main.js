@@ -1,28 +1,12 @@
-import { simulator } from './simulation/simulator.js';
-import { Heatmap } from './components/Heatmap.js';
-import { Routing } from './components/Routing.js';
-import { Flow } from './components/Flow.js';
-import { WaitTimes } from './components/WaitTimes.js';
-import { Chatbot } from './components/Chatbot.js';
-import { CongestionPredictor, USE_VERTEX } from './ai/predictor.js';
 import { firebaseService, initAuth, onAuthChanged } from './services/firebaseService.js';
 import { routeCache } from './utils/cache.js';
+import { ui } from './ui/UIController.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   // ── Firebase Auth — establish anonymous session before any Firestore writes
   await initAuth();
   onAuthChanged((uid) => {
-    const authPill = document.getElementById('status-auth-pill');
-    if (authPill) {
-      const dot = authPill.querySelector('.dot');
-      if (uid) {
-        dot.className = 'dot green';
-        authPill.lastChild.textContent = ' Auth: OK';
-      } else {
-        dot.className = 'dot grey';
-        authPill.lastChild.textContent = ' Auth: OFF';
-      }
-    }
+    ui.setStatusPill('auth', !!uid);
   });
 
   // ── Bootstrap components
@@ -45,28 +29,17 @@ document.addEventListener('DOMContentLoaded', async () => {
    *
    * @param {Array<{density: number}>} zones - Current zone density snapshot.
    */
-  function updateSafetyScore(zones) {
-    const scoreEl = document.getElementById('safety-score');
-    const attendEl = document.getElementById('live-attendance');
-    if (!scoreEl) return;
-
+  const updateMetrics = (zones) => {
     const avgDensity = zones.reduce((sum, z) => sum + z.density, 0) / zones.length;
     const safetyPct = Math.round((1 - avgDensity) * 100);
-    const newText = `${safetyPct}%`;
+    ui.updateMetrics(simulator.state.attendance, safetyPct);
+  };
 
-    if (scoreEl.textContent !== newText) {
-      scoreEl.textContent = newText;
-      scoreEl.className = 'att-value';
-      if (safetyPct >= 60) scoreEl.classList.add('text-success');
-      else if (safetyPct >= 35) scoreEl.classList.add('text-warning');
-      else scoreEl.classList.add('text-danger');
-    }
-
-    // Update attendance display
-    if (attendEl) {
-      attendEl.textContent = simulator.state.attendance.toLocaleString();
-    }
-  }
+  // Initial UI state
+  ui.setStatusPill('vertex', USE_VERTEX);
+  ui.setStatusPill('firebase', !!firebaseService.db);
+  updateMetrics(simulator.state.zones);
+  updateAIRecommendation(simulator.state);
 
   // ── Simulator event bindings
   // EVENT-DRIVEN ARCHITECTURE: the simulator emits events on a fixed cadence
@@ -77,7 +50,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     heatmap.update(zones);
     updateAIRecommendation(simulator.state);
     updateSmartSuggestions(simulator.state);
-    updateSafetyScore(zones);
+    updateMetrics(zones);
 
     // 🚀 Production Firebase Integration
     firebaseService.saveCrowdData(zones);
@@ -101,7 +74,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   simulator.on('alert', (msg) => {
-    showAlertBanner(msg);
+    ui.showAlert(msg);
 
     const warningLayer = document.getElementById('warning-layer');
     if (!warningLayer) return;
@@ -171,12 +144,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const end = document.getElementById('route-end').value;
 
     if (!start || !end) {
-      showAlertBanner('Please select both origin and destination.');
+      ui.showAlert('Please select both origin and destination.');
       return;
     }
 
     if (start === end) {
-      showAlertBanner('Start and destination cannot be the same');
+      ui.showAlert('Start and destination cannot be the same');
       return;
     }
 
@@ -246,7 +219,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const btn = document.getElementById('find-route-btn');
 
     if (start && end && start === end) {
-      showAlertBanner('Start and destination cannot be the same');
+      ui.showAlert('Start and destination cannot be the same');
       if (btn) {
         btn.disabled = true;
         btn.style.opacity = '0.5';
@@ -268,82 +241,26 @@ document.addEventListener('DOMContentLoaded', async () => {
   populateRouteDropdowns();
 
   // ── Alert Toasts
-  function showAlertBanner(msg) {
-    const container = document.getElementById('alert-container');
-    if (!container) return;
+  // ── Alert Toasts (Moved to UIController)
 
-    const toast = document.createElement('div');
-    toast.className = 'alert-toast';
-    toast.innerHTML = `
-      <span class="alert-icon">⚠️</span>
-      <span class="alert-message">${msg}</span>
-      <button class="close-btn">✕</button>
-    `;
-    container.appendChild(toast);
-
-    let removed = false;
-    const removeToast = () => {
-      if (removed) return;
-      removed = true;
-      toast.classList.add('removing');
-      setTimeout(() => { if (container.contains(toast)) container.removeChild(toast); }, 250);
-    };
-
-    toast.querySelector('.close-btn').addEventListener('click', removeToast);
-    setTimeout(removeToast, 5000);
-  }
 
   // ── AI Primary Recommendation (Proactive)
   function updateAIRecommendation(state) {
-    const card = document.getElementById('ai-recommendation');
-    const actionEl = document.getElementById('ai-action');
-    const reasonEl = document.getElementById('ai-reason');
-    if (!card || !actionEl || !reasonEl) return;
-
     const zones = state.zones;
     const analysis = CongestionPredictor.getTrendAnalysis(state.historicalDensity);
+    const sorted = [...zones].sort((a, b) => a.density - b.density);
+    const bestZone = sorted[0];
+    const worstZone = sorted[sorted.length - 1];
 
-    const bestZone = [...zones].sort((a, b) => a.density - b.density)[0];
-    const worstZone = [...zones].sort((a, b) => b.density - a.density)[0];
-
-    let newAction = `Head to ${bestZone.name}`;
-    let newReason = `Current optimal path identified. ${analysis.message}`;
-
-    if (analysis.isIncreasing) {
-      newAction = `Proactive Move: ${bestZone.name}`;
-      newReason = `Congestion building fast. Avoid ${worstZone.name} now.`;
-    }
-
-    if (actionEl.textContent !== newAction || reasonEl.textContent !== newReason) {
-      card.classList.add('ai-updating');
-      requestAnimationFrame(() => {
-        actionEl.textContent = newAction;
-        reasonEl.textContent = newReason;
-        setTimeout(() => card.classList.remove('ai-updating'), 350);
-      });
-    }
+    ui.updateAIRecommendation(analysis, bestZone, worstZone);
   }
 
   // ── Smart Suggestions (Proactive)
-  const SUGGESTION_IDS = ['sug-0', 'sug-1', 'sug-2'];
-
-  function initSuggestionNodes() {
-    const container = document.getElementById('suggestion-list-container');
-    if (!container) return;
-    container.innerHTML = '';
-    SUGGESTION_IDS.forEach(id => {
-      const li = document.createElement('li');
-      li.id = id;
-      li.className = 'sug-item';
-      li.innerHTML = '<span class="suggestion-icon"></span><span class="sug-text"></span>';
-      container.appendChild(li);
-    });
-  }
-
   function updateSmartSuggestions(state) {
     const analysis = CongestionPredictor.getTrendAnalysis(state.historicalDensity);
-    const bestWait = [...state.waitTimes].sort((a, b) => a.time - b.time)[0];
-    const worstZone = [...state.zones].sort((a, b) => b.density - a.density)[0];
+    const bestWait = waitTimes.getShortestWait();
+    const sorted = [...state.zones].sort((a, b) => b.density - a.density);
+    const worstZone = sorted[0];
 
     const items = [
       bestWait
@@ -357,32 +274,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         : { icon: '✨', text: 'Flow is currently optimal' },
     ];
 
-    SUGGESTION_IDS.forEach((id, i) => {
-      const li = document.getElementById(id);
-      if (!li) return;
-      const item = items[i];
-      const iconEl = li.querySelector('.suggestion-icon');
-      const textEl = li.querySelector('.sug-text');
-      if (!item) {
-        li.style.opacity = '0';
-        li.style.pointerEvents = 'none';
-        return;
-      }
-      const newText = item.text;
-      if (textEl.textContent !== newText) {
-        li.classList.add('sug-updating');
-        requestAnimationFrame(() => {
-          iconEl.textContent = item.icon;
-          textEl.textContent = newText;
-          li.style.opacity = '1';
-          li.style.pointerEvents = '';
-          setTimeout(() => li.classList.remove('sug-updating'), 200);
-        });
-      }
-    });
-  }
-
-  initSuggestionNodes();
   updateSmartSuggestions(simulator.state);
 
   // ── Emergency Evacuation Mode
@@ -418,14 +309,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
     }
 
-    // 4. Update button state
-    emergencyBtn.textContent = emergencyActive ? '✅ End Emergency' : '🚨 Emergency Mode';
-    emergencyBtn.classList.toggle('emergency-active', emergencyActive);
-    document.body.classList.toggle('emergency-mode', emergencyActive);
-    
-    // Toggle UI Banner
-    const banner = document.getElementById('emergency-banner');
-    if (banner) banner.classList.toggle('hidden', !emergencyActive);
+    // 4. Update UI
+    ui.setEmergencyUI(emergencyActive);
 
     // Google Analytics: track emergency mode toggle
     firebaseService.logAnalyticsEvent('emergency_mode_toggled', {
