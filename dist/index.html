@@ -9,9 +9,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <script type="module" crossorigin src="/assets/main-D375pA2v.js"></script>
-  <link rel="modulepreload" crossorigin href="/assets/simulator-DYBwKOQx.js">
-  <link rel="stylesheet" crossorigin href="/assets/simulator-BiXAcWRv.css">
+  <script type="module" crossorigin src="/assets/main-CrtFX1pU.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/simulator-BEHsGSyS.js">
+  <link rel="stylesheet" crossorigin href="/assets/simulator-DFc3_J8l.css">
 </head>
 
 <body>
@@ -157,8 +157,10 @@
               <rect x="50" y="200" width="100" height="200" rx="16" fill="none" class="zone-overlay-border"
                 pointer-events="none" aria-hidden="true"></rect>
             </g>
-            <text id="label-gate_a" x="100" y="300" class="zone-label" fill="#fff" text-anchor="middle"
+            <text id="label-gate_a" x="100" y="295" class="zone-label" fill="#fff" text-anchor="middle"
               dominant-baseline="middle" aria-hidden="true">Gate A</text>
+            <text id="telemetry-gate_a" x="100" y="315" class="telemetry-label" fill="var(--green)" text-anchor="middle"
+              dominant-baseline="middle" aria-hidden="true" style="display: none;">0% | 0.0m/s</text>
 
             <!-- Gate B (East) -->
             <g filter="url(#zone-shadow)">
@@ -168,8 +170,10 @@
               <rect x="850" y="200" width="100" height="200" rx="16" fill="none" class="zone-overlay-border"
                 pointer-events="none" aria-hidden="true"></rect>
             </g>
-            <text id="label-gate_b" x="900" y="300" class="zone-label" fill="#fff" text-anchor="middle"
+            <text id="label-gate_b" x="900" y="295" class="zone-label" fill="#fff" text-anchor="middle"
               dominant-baseline="middle" aria-hidden="true">Gate B</text>
+            <text id="telemetry-gate_b" x="900" y="315" class="telemetry-label" fill="var(--green)" text-anchor="middle"
+              dominant-baseline="middle" aria-hidden="true" style="display: none;">0% | 0.0m/s</text>
 
             <!-- Section 101 (North) -->
             <g filter="url(#zone-shadow)">
@@ -179,8 +183,10 @@
               <rect x="300" y="20" width="400" height="80" rx="24" fill="none" class="zone-overlay-border"
                 pointer-events="none" aria-hidden="true"></rect>
             </g>
-            <text id="label-section_101" x="500" y="60" class="zone-label" fill="#fff" text-anchor="middle"
+            <text id="label-section_101" x="500" y="55" class="zone-label" fill="#fff" text-anchor="middle"
               dominant-baseline="middle" aria-hidden="true">Section 101</text>
+            <text id="telemetry-section_101" x="500" y="75" class="telemetry-label" fill="var(--green)" text-anchor="middle"
+              dominant-baseline="middle" aria-hidden="true" style="display: none;">0% | 0.0m/s</text>
 
             <!-- Section 205 (South) -->
             <g filter="url(#zone-shadow)">
@@ -190,8 +196,10 @@
               <rect x="300" y="500" width="400" height="80" rx="24" fill="none" class="zone-overlay-border"
                 pointer-events="none" aria-hidden="true"></rect>
             </g>
-            <text id="label-section_205" x="500" y="540" class="zone-label" fill="#fff" text-anchor="middle"
+            <text id="label-section_205" x="500" y="535" class="zone-label" fill="#fff" text-anchor="middle"
               dominant-baseline="middle" aria-hidden="true">Section 205</text>
+            <text id="telemetry-section_205" x="500" y="555" class="telemetry-label" fill="var(--green)" text-anchor="middle"
+              dominant-baseline="middle" aria-hidden="true" style="display: none;">0% | 0.0m/s</text>
 
             <!-- Restroom North (North West) -->
             <g filter="url(#zone-shadow)">
@@ -201,8 +209,10 @@
               <rect x="50" y="20" width="200" height="80" rx="16" fill="none" class="zone-overlay-border"
                 pointer-events="none" aria-hidden="true"></rect>
             </g>
-            <text id="label-restroom_north" x="150" y="60" class="zone-label" fill="#fff" text-anchor="middle"
+            <text id="label-restroom_north" x="150" y="55" class="zone-label" fill="#fff" text-anchor="middle"
               dominant-baseline="middle" aria-hidden="true">Restrooms N</text>
+            <text id="telemetry-restroom_north" x="150" y="75" class="telemetry-label" fill="var(--green)" text-anchor="middle"
+              dominant-baseline="middle" aria-hidden="true" style="display: none;">0% | 0.0m/s</text>
 
             <!-- Food Court (South East) -->
             <g filter="url(#zone-shadow)">
@@ -212,8 +222,10 @@
               <rect x="750" y="500" width="200" height="80" rx="16" fill="none" class="zone-overlay-border"
                 pointer-events="none" aria-hidden="true"></rect>
             </g>
-            <text id="label-food_court" x="850" y="540" class="zone-label" fill="#fff" text-anchor="middle"
+            <text id="label-food_court" x="850" y="535" class="zone-label" fill="#fff" text-anchor="middle"
               dominant-baseline="middle" aria-hidden="true">Food Court</text>
+            <text id="telemetry-food_court" x="850" y="555" class="telemetry-label" fill="var(--green)" text-anchor="middle"
+              dominant-baseline="middle" aria-hidden="true" style="display: none;">0% | 0.0m/s</text>
           </g>
 
           <!-- Particle SMIL Crowd Flow Layer -->
@@ -243,12 +255,12 @@
           </div>
         </div>
         <div class="status-grid">
-          <div class="status-pill"><span class="dot green"></span> Simulator: ON</div>
-          <div class="status-pill"><span id="status-predictor" class="dot green"></span> AI: ACTIVE</div>
+          <div class="status-pill" id="status-simulator-pill"><span class="dot green"></span> Simulator: ON</div>
+          <div class="status-pill" id="status-predictor-pill"><span id="status-predictor" class="dot green"></span> AI: ACTIVE</div>
           <div id="status-vertex-pill" class="status-pill"><span class="dot grey"></span> Vertex: OFF</div>
-          <div class="status-pill"><span class="dot green"></span> Firebase: OK</div>
+          <div class="status-pill" id="status-firebase-pill"><span class="dot green"></span> Firebase: OK</div>
           <div id="status-auth-pill" class="status-pill"><span class="dot grey"></span> Auth: --</div>
-          <div class="status-pill"><span class="dot green"></span> Analytics: ON</div>
+          <div class="status-pill" id="status-analytics-pill"><span class="dot green"></span> Analytics: ON</div>
         </div>
       </section>
 
@@ -276,7 +288,9 @@
       <section class="widget-section" id="smart-suggestions" aria-label="Smart suggestions based on current conditions">
         <h4 class="widget-title">Smart Suggestions ⚡</h4>
         <ul class="suggestion-list" id="suggestion-list-container" role="region" aria-live="polite" aria-label="List of smart suggestions">
-          <li><span class="suggestion-icon" aria-hidden="true">💡</span> Analyzing best routes...</li>
+          <li id="sug-0"><span class="suggestion-icon" aria-hidden="true">💡</span> <span class="sug-text">Analyzing routes...</span></li>
+          <li id="sug-1"><span class="suggestion-icon" aria-hidden="true">🧠</span> <span class="sug-text">Aggregating telemetry...</span></li>
+          <li id="sug-2"><span class="suggestion-icon" aria-hidden="true">📡</span> <span class="sug-text">Syncing with Vertex...</span></li>
         </ul>
       </section>
 

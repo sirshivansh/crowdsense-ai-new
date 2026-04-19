@@ -1634,6 +1634,38 @@ body.emergency-mode .map-wrapper {
 .scenario-select:hover { border-color: var(--accent); }
 .demo-btn { background: var(--bg-elevated); border: 1px solid var(--border-md); color: var(--text-primary); height: 32px; padding: 0 12px; border-radius: var(--r-sm); font-weight: 600; font-size: 11px; white-space: nowrap; }
 .demo-btn:hover { background: var(--bg-hover); border-color: var(--accent); }
+.suggestion-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.suggestion-list li {
+  background: var(--bg-raised);
+  border: 1px solid var(--border-faint);
+  border-radius: var(--r-sm);
+  padding: 6px 10px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.suggestion-list li:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-md);
+  transform: translateX(2px);
+}
+
+.suggestion-icon { font-size: 13px; }
+.sug-updating { animation: sugPulse 0.3s ease; }
+@keyframes sugPulse { from { opacity: 0.5; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+
 .route-explanation { background: var(--accent-soft); border-left: 2px solid var(--accent); padding: 8px 12px; margin-top: 10px; border-radius: 0 var(--r-sm) var(--r-sm) 0; display: flex; gap: 10px; align-items: flex-start; animation: slideIn 0.3s ease; }
 .explanation-icon { font-size: 14px; }
 .route-explanation p { font-size: 11px; color: var(--text-secondary); line-height: 1.4; margin: 0; }
@@ -1643,6 +1675,39 @@ body.emergency-mode .map-wrapper {
 .metric .m-lbl { font-size: 8px; text-transform: uppercase; color: var(--text-tertiary); letter-spacing: 0.05em; }
 .border-l { border-left: 1px solid var(--border-faint); }
 @keyframes slideIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+.right-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  overflow-y: auto;
+  max-height: 100vh;
+  padding-bottom: 20px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-md) transparent;
+}
+
+.right-sidebar::-webkit-scrollbar { width: 4px; }
+.right-sidebar::-webkit-scrollbar-thumb { background: var(--border-md); border-radius: 10px; }
+
+.telemetry-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+body.staff-view .telemetry-label {
+  display: block !important;
+  opacity: 1;
+}
+
+body.staff-view .zone-label {
+  transform: translateY(-2px);
+  transition: transform 0.3s ease;
+}
 
 .header-with-action {
   display: flex;

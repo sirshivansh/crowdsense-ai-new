@@ -69,12 +69,28 @@ try {
     updateAIRecommendation(simulator.state);
     updateSmartSuggestions(simulator.state);
     updateMetrics(zones);
+    updateTelemetryHUD(zones);
 
     // 🚀 Production Firebase Integration
     firebaseService.saveCrowdData(zones);
     Logger.info("Crowd data sent to Firebase", zones);
     firebaseService.triggerAlertIfHighDensity(zones);
   });
+
+  /**
+   * Updates tactical telemetry HUD labels for Staff Mode.
+   * @param {Array} zones - Current zone states.
+   */
+  function updateTelemetryHUD(zones) {
+    zones.forEach(z => {
+      const el = document.getElementById(`telemetry-${z.id}`);
+      if (!el) return;
+      const density = Math.round(z.density * 100);
+      const flow = (0.5 + Math.random() * 1.5).toFixed(1); // Simulated throughput
+      el.textContent = `${density}% | ${flow}m/s`;
+      el.setAttribute('fill', z.density > 0.75 ? 'var(--red)' : (z.density > 0.4 ? 'var(--yellow)' : 'var(--green)'));
+    });
+  }
 
   simulator.on('update:predictions', async (history) => {
     // Uses Vertex AI when USE_VERTEX flag is enabled, otherwise local WRC engine
