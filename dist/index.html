@@ -4,14 +4,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CrowdSense AI - Live Attendee Map</title>
+  <title>CrowdSense AI New - Live Attendee Map</title>
   <meta name="description" content="Live stadium map, crowd congestion tracker, and optimal routes for attendees." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <script type="module" crossorigin src="/assets/main-DVkrwmzC.js"></script>
-  <link rel="modulepreload" crossorigin href="/assets/simulator-D-2kbl6s.js">
-  <link rel="stylesheet" crossorigin href="/assets/simulator-Cfb31arl.css">
+  <script type="module" crossorigin src="/assets/main-BOLR048S.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/simulator-BnTF0lqO.js">
+  <link rel="stylesheet" crossorigin href="/assets/simulator-Cmt_5uwu.css">
 </head>
 
 <body>
@@ -26,7 +26,7 @@
   <header class="topbar glass-panel">
     <div class="logo">
       <span class="logo-icon" aria-hidden="true">🏟️</span>
-      <h1>CrowdSense <strong>AI</strong></h1>
+      <h1>CrowdSense <strong>AI New</strong></h1>
     </div>
     <div class="topbar-center">
       <div class="attendance-chip" role="status" aria-label="Current stadium attendance">
@@ -41,6 +41,13 @@
         <span class="att-label">Safety</span>
         <span class="att-value" id="safety-score">--</span>
       </div>
+    </div>
+    <div class="venue-selector-container">
+      <select id="venue-selector" class="venue-select" aria-label="Switch between stadiums">
+        <option value="stadium-main" selected>🏟️ Main Stadium (Live)</option>
+        <option value="arena-north">🏀 North Arena (Idle)</option>
+        <option value="field-west">⚽ West Training Field (Idle)</option>
+      </select>
     </div>
     <nav class="topbar-actions" aria-label="Main navigation">
       <button class="icon-btn active" aria-label="View heatmap of crowd density" id="btn-heatmap" aria-pressed="true">🌡️</button>

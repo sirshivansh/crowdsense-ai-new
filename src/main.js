@@ -1,3 +1,10 @@
+import { simulator } from './simulation/simulator.js';
+import { Heatmap } from './components/Heatmap.js';
+import { Routing } from './components/Routing.js';
+import { Flow } from './components/Flow.js';
+import { WaitTimes } from './components/WaitTimes.js';
+import { Chatbot } from './components/Chatbot.js';
+import { CongestionPredictor, USE_VERTEX } from './ai/predictor.js';
 import { firebaseService, initAuth, onAuthChanged } from './services/firebaseService.js';
 import { routeCache } from './utils/cache.js';
 import { ui } from './ui/UIController.js';
@@ -20,7 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   heatmap.update(simulator.state.zones);
   waitTimes.update(simulator.state.waitTimes);
   updateAIRecommendation(simulator.state);
-  updateSafetyScore(simulator.state.zones);
+  updateMetrics(simulator.state.zones);
 
   /**
    * Computes and displays a stadium-wide Safety Score.
@@ -273,6 +280,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         ? { icon: '🚫', text: `Avoid ${worstZone.name} (Predicted High)` }
         : { icon: '✨', text: 'Flow is currently optimal' },
     ];
+    ui.updateSmartSuggestions(items);
+  }
 
   updateSmartSuggestions(simulator.state);
 
