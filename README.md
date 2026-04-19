@@ -4,8 +4,8 @@
 </p>
 
 <p align="center">
-  <a href="https://crowdsense-ai-7d584.web.app" target="_blank"><strong>🌐 Live Demo (Attendee Map)</strong></a> •
-  <a href="https://crowdsense-ai-7d584.web.app/admin" target="_blank"><strong>🛡️ Admin Dashboard</strong></a>
+  <a href="https://crowdsense-ai-81506469908.asia-south1.run.app" target="_blank"><strong>🌐 Live Demo (Attendee Map)</strong></a> •
+  <a href="https://crowdsense-ai-81506469908.asia-south1.run.app/admin" target="_blank"><strong>🛡️ Admin Dashboard</strong></a>
 </p>
 
 <p align="center">
@@ -204,8 +204,8 @@ npm test           # 44 tests, ~500ms
 ```
 
 - **Local Admin:** `http://localhost:5173/admin.html`
-- **Production Attendee Map:** [crowdsense-ai-7d584.web.app](https://crowdsense-ai-7d584.web.app)
-- **Production Admin Panel:** [crowdsense-ai-7d584.web.app/admin](https://crowdsense-ai-7d584.web.app/admin)
+- **Production Attendee Map:** [crowdsense-ai-81506469908.asia-south1.run.app](https://crowdsense-ai-81506469908.asia-south1.run.app)
+- **Production Admin Panel:** [crowdsense-ai-81506469908.asia-south1.run.app/admin](https://crowdsense-ai-81506469908.asia-south1.run.app/admin)
 
 ---
 
