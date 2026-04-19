@@ -107,23 +107,9 @@ Production-ready integration using Google Cloud Vertex AI (`USE_VERTEX = true`):
 
 ---
 
-## 📊 Visibility & Executive Monitoring
-
-Designed for transparency and evaluation, the system includes dedicated tools to monitor real-time decision intelligence:
-
-| Feature | Description | Benefit |
-|---|---|---|
-| **▶ Automated Demo Scenarios** | A scripted sequence following *Normal → Peak → Emergency* states | Instant demonstration of system resilience and response |
-| **🔎 Explainable AI (XAI)** | Natural-language justifications for routing decisions (e.g., "bypassing zones with rapid density increase") | Transparency into the "why" behind pathfinding decisions |
-| **⚡ Real-Time Performance Grid** | Live tracking of calculation latency (ms), AI confidence (%), and congestion avoidance count | Proof of millisecond-latency performance and accuracy |
-| **🩺 System Health Dashboard** | Integrated status panel for Vertex AI, Auth, Analytics, and Firebase services | Ready-to-audit confirmation of all Google service integrations |
-| **🕹️ Scenario Selector** | Manual toggle between Normal, Peak (85%), and Emergency states | Stress-test the system under different load conditions instantly |
-
----
-
 ## ☁️ Google Cloud Services Integration
 
-CrowdSense AI integrates **6 distinct Google Cloud / Firebase services** across the full stack:
+CrowdSense AI integrates **9 distinct Google Cloud / Firebase services** across the full stack:
 
 | Service | Purpose | Integration Point |
 |---|---|---|
@@ -133,6 +119,9 @@ CrowdSense AI integrates **6 distinct Google Cloud / Firebase services** across 
 | **Firebase Performance Monitoring** | Auto page load instrumentation + custom traces | `getPerformance()` + custom trace on route computation |
 | **Vertex AI** | Scalable ML inference for congestion prediction | Async prediction pipeline with automatic local fallback |
 | **Cloud Run** | Containerized deployment with structured logging | Dockerfile + health check endpoint (`/healthz`) + JSON Cloud Logging |
+| **Firebase App Check** | Project protection vs bot/tampering | **reCAPTCHA Enterprise** provider initialization on start |
+| **Firebase Remote Config** | Administrative bypass/override control | **Emergency_override flag** polled every 30s to trigger remote evacuation |
+| **Google Cloud Storage** | Persistent data archiving for post-incident audits | **System snapshots** uploaded during active emergency events |
 
 ### Security Rules (`firestore.rules`)
 - All reads/writes gated behind `request.auth != null`

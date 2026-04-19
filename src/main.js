@@ -434,7 +434,39 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     console.log(`[Emergency] Mode switched to: ${scenario}`);
+
+    // [New] Google Cloud Storage Integration: Archive system state on emergency
+    if (emergencyActive) {
+      firebaseService.uploadSystemSnapshot('emergency_mode', {
+        ...simulator.state,
+        blockedZones: [...simulator.blockedZones]
+      });
+    }
   });
+
+  // ── Advanced Google Services Integration (Remote Config polling)
+  /**
+   * Periodically checks Firebase Remote Config for administrative overrides.
+   * If 'emergency_override' is set to true in the console, the app will
+   * automatically transition to Emergency Mode globally.
+   */
+  async function checkCloudOverrides() {
+    const overrideStatus = await firebaseService.fetchEmergencyOverride();
+    
+    // Only trigger if cloud state out of sync with current local state
+    if (overrideStatus && !emergencyActive) {
+      console.log('🚨 Cloud Override detected! Transitioning to Emergency Mode.');
+      emergencyBtn?.click(); 
+    } else if (!overrideStatus && emergencyActive) {
+      // Opt-out: cloud can also clear local emergency mode
+      console.log('🛡️ Cloud Override cleared. Returning to Normal Mode.');
+      emergencyBtn?.click();
+    }
+  }
+
+  // Poll cloud configuration every 30 seconds
+  setInterval(checkCloudOverrides, 30000);
+  checkCloudOverrides(); // Initial check
 
   // ── NEW: Demo & Status Glue Logic (Tasks 1, 2, 3, 4, 5)
 
