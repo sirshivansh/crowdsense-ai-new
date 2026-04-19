@@ -45,17 +45,19 @@ try {
    *
    * @param {Array<{density: number}>} zones - Current zone density snapshot.
    */
-  const updateMetrics = (zones) => {
+  function updateMetrics(zones) {
     const avgDensity = zones.reduce((sum, z) => sum + z.density, 0) / zones.length;
     const safetyPct = Math.round((1 - avgDensity) * 100);
     ui.updateMetrics(simulator.state.attendance, safetyPct);
-  };
+  }
 
   // Initial UI state
   ui.setStatusPill('vertex', USE_VERTEX);
   ui.setStatusPill('firebase', !!firebaseService.db);
+  ui.setStatusPill('analytics', true);
   updateMetrics(simulator.state.zones);
   updateAIRecommendation(simulator.state);
+  updateSmartSuggestions(simulator.state);
 
   // ── Simulator event bindings
   // EVENT-DRIVEN ARCHITECTURE: the simulator emits events on a fixed cadence
@@ -491,8 +493,4 @@ try {
 
   // ── Final Startup Sync
   populateRouteDropdowns();
-  updateSmartSuggestions(simulator.state);
-  updateMetrics(simulator.state.zones);
-  ui.setStatusPill('analytics', true);
-  ui.setStatusPill('vertex', USE_VERTEX);
 });

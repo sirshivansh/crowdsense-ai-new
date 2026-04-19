@@ -40,7 +40,7 @@ export class UIController {
    * @param {number} safetyScore 
    */
   updateMetrics(attendance, safetyScore) {
-    if (this.attendanceEl) {
+    if (this.attendanceEl && attendance !== undefined) {
       this.attendanceEl.textContent = attendance.toLocaleString();
     }
     if (this.safetyScoreEl) {
