@@ -4,6 +4,11 @@
 </p>
 
 <p align="center">
+  <a href="https://crowdsense-ai-7d584.web.app" target="_blank"><strong>🌐 Live Demo (Attendee Map)</strong></a> •
+  <a href="https://crowdsense-ai-7d584.web.app/admin" target="_blank"><strong>🛡️ Admin Dashboard</strong></a>
+</p>
+
+<p align="center">
   <a href="./tests"><img src="https://img.shields.io/badge/tests-44%20passing-brightgreen" alt="Tests"></a>
   <a href="https://cloud.google.com/vertex-ai"><img src="https://img.shields.io/badge/AI-Vertex%20AI%20Ready-4285F4?logo=googlecloud" alt="Vertex AI"></a>
   <a href="https://firebase.google.com"><img src="https://img.shields.io/badge/pipeline-Firebase%20Firestore-FFCA28?logo=firebase" alt="Firebase"></a>
@@ -190,15 +195,17 @@ Every routing evaluation produces a structured audit log and a developer-grade d
 
 ---
 
-## Setup
+## Setup & Deployment
 
 ```bash
 npm install
-npm run dev        # → http://localhost:5173
+npm run dev        # Local Dev: http://localhost:5173
 npm test           # 44 tests, ~500ms
 ```
 
-Admin dashboard: `http://localhost:5173/admin.html` (Enable 🚨 Emergency Mode here)
+- **Local Admin:** `http://localhost:5173/admin.html`
+- **Production Attendee Map:** [crowdsense-ai-7d584.web.app](https://crowdsense-ai-7d584.web.app)
+- **Production Admin Panel:** [crowdsense-ai-7d584.web.app/admin](https://crowdsense-ai-7d584.web.app/admin)
 
 ---
 
