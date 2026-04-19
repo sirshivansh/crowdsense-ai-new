@@ -1120,6 +1120,10 @@ select option {
   margin-bottom: 5px
 }
 
+.primary-btn {
+  margin-bottom: 30px;
+}
+
 .tt-metric {
   font-size: 11px;
   color: var(--text-secondary);
@@ -1676,19 +1680,21 @@ body.emergency-mode .map-wrapper {
 .border-l { border-left: 1px solid var(--border-faint); }
 @keyframes slideIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-.right-sidebar {
+.right-panel {
   display: flex;
   flex-direction: column;
   gap: 15px;
   overflow-y: auto;
-  max-height: 100vh;
-  padding-bottom: 20px;
+  max-height: calc(100vh - 80px);
+  padding: 20px;
   scrollbar-width: thin;
   scrollbar-color: var(--border-md) transparent;
 }
 
-.right-sidebar::-webkit-scrollbar { width: 4px; }
-.right-sidebar::-webkit-scrollbar-thumb { background: var(--border-md); border-radius: 10px; }
+.right-panel::-webkit-scrollbar { width: 4px; }
+.right-panel::-webkit-scrollbar-thumb { background: var(--border-md); border-radius: 10px; }
+
+.right-panel > * { flex-shrink: 0; }
 
 .telemetry-label {
   font-family: var(--mono);
