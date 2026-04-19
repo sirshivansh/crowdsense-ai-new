@@ -10,6 +10,7 @@ import { routeCache } from './utils/cache.js';
 import { ui } from './ui/UIController.js';
 import { config, validateConfig, Logger } from './config.js';
 import { Security } from './utils/security.js';
+import { ScenarioManager } from './simulation/ScenarioManager.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
 try {
@@ -31,6 +32,7 @@ try {
   const flow = new Flow('flow-layer', routing);
   const waitTimes = new WaitTimes('wait-list-container');
   const chatbot = new Chatbot();
+  const scenarioManager = new ScenarioManager(simulator, ui, firebaseService);
 
   // ── Initial paint
   heatmap.update(simulator.state.zones);
@@ -314,84 +316,27 @@ try {
 
   // ── Emergency Evacuation Mode
   const emergencyBtn = document.getElementById('btn-emergency');
-  let emergencyActive = false;
-
   emergencyBtn?.addEventListener('click', () => {
-    emergencyActive = !emergencyActive;
-    const scenario = emergencyActive ? 'emergency' : 'normal';
-
-    // 1. Switch simulator scenario (spikes densities, blocks zones, fires alerts)
-    simulator.simulateScenario(scenario);
-
-    // 2. Invalidate route cache — weights have changed
-    routeCache.clear();
-
-    // 3. Log to Firebase — structured analytics + prediction audit
-    if (emergencyActive) {
-      firebaseService.logPrediction({
-        type: 'emergency',
-        message: 'Evacuation mode triggered by operator',
-        confidence: 1.0,
-      });
-      firebaseService.triggerAlertIfHighDensity(simulator.state.zones, 0.7);
-      firebaseService.logSystemEvent({
-        type: 'emergency',
-        metadata: { action: 'activated', blockedZones: [...simulator.blockedZones] }
-      });
-    } else {
-      firebaseService.logSystemEvent({
-        type: 'emergency',
-        metadata: { action: 'deactivated' }
-      });
-    }
-
-    // 4. Update UI
-    ui.setEmergencyUI(emergencyActive);
-
-    // Google Analytics: track emergency mode toggle
-    firebaseService.logAnalyticsEvent('emergency_mode_toggled', {
-      active: emergencyActive,
-      scenario,
-    });
-
-    console.log(`[Emergency] Mode switched to: ${scenario}`);
-
-    // [New] Google Cloud Storage Integration: Archive system state on emergency
-    if (emergencyActive) {
-      firebaseService.uploadSystemSnapshot('emergency_mode', {
-        ...simulator.state,
-        blockedZones: [...simulator.blockedZones]
-      });
-    }
+    scenarioManager.setScenario(scenarioManager.emergencyActive ? 'normal' : 'emergency');
   });
 
   // ── Advanced Google Services Integration (Remote Config polling)
-  /**
-   * Periodically checks Firebase Remote Config for administrative overrides.
-   * If 'emergency_override' is set to true in the console, the app will
-   * automatically transition to Emergency Mode globally.
-   */
   async function checkCloudOverrides() {
     const overrideStatus = await firebaseService.fetchEmergencyOverride();
-    
-    // Only trigger if cloud state out of sync with current local state
-    if (overrideStatus && !emergencyActive) {
+    if (overrideStatus && !scenarioManager.emergencyActive) {
       console.log('🚨 Cloud Override detected! Transitioning to Emergency Mode.');
-      emergencyBtn?.click(); 
-    } else if (!overrideStatus && emergencyActive) {
-      // Opt-out: cloud can also clear local emergency mode
+      scenarioManager.setScenario('emergency');
+    } else if (!overrideStatus && scenarioManager.emergencyActive) {
       console.log('🛡️ Cloud Override cleared. Returning to Normal Mode.');
-      emergencyBtn?.click();
+      scenarioManager.setScenario('normal');
     }
   }
 
   // Poll cloud configuration every 30 seconds
   setInterval(checkCloudOverrides, 30000);
-  checkCloudOverrides(); // Initial check
+  checkCloudOverrides();
 
-  // ── NEW: Demo & Status Glue Logic (Tasks 1, 2, 3, 4, 5)
-
-  // System Status initialization (Task 3)
+  // System Status initialization
   const updateSystemStatus = () => {
     const vertexPill = document.getElementById('status-vertex-pill');
     if (vertexPill) {
@@ -400,70 +345,25 @@ try {
       vertexPill.innerHTML = `<span class="${dot.className}"></span> Vertex AI: ${USE_VERTEX ? 'ON' : 'OFF'}`;
     }
     const predDot = document.getElementById('status-predictor');
-    if (predDot) predDot.className = 'dot green'; // Keep it green as it runs locally/vertex
+    if (predDot) predDot.className = 'dot green';
   };
   updateSystemStatus();
 
-  // Scenario Selector (Task 2)
+  // Scenario Selector
   document.getElementById('scenario-selector')?.addEventListener('change', (e) => {
-    const scenario = e.target.value;
-    if (scenario === 'emergency') {
-      if (!emergencyActive) emergencyBtn?.click();
-    } else if (scenario === 'peak') {
-      // Simulate peak crowd manually by spiking densities
-      simulator.state.zones.forEach(z => z.density = Math.min(0.95, z.density + 0.45));
-      simulator.emit('update:heatmap', simulator.state.zones);
-      if (emergencyActive) emergencyBtn?.click();
-    } else {
-      if (emergencyActive) emergencyBtn?.click();
-      simulator.simulateScenario('normal');
-    }
+    scenarioManager.setScenario(e.target.value);
   });
 
-  // Staff Mode Toggle (Task: Perfect Alignment)
+  // Staff Mode Toggle
   document.getElementById('staff-mode-toggle')?.addEventListener('change', (e) => {
-    const isStaff = e.target.checked;
-    ui.setTacticalView(isStaff);
-    
-    // Immediate refresh of recommendations with extra fidelity
+    ui.setTacticalView(e.target.checked);
     updateAIRecommendation(simulator.state);
   });
 
-  // Demo Mode (Task 1)
-  const runDemo = async () => {
-    const demoBtn = document.getElementById('btn-run-demo');
-    const selector = document.getElementById('scenario-selector');
-    if (!demoBtn || demoBtn.disabled) return;
-
-    demoBtn.disabled = true;
-    const originalText = demoBtn.textContent;
-    
-    // Step 1: Normal
-    selector.value = 'normal';
-    selector.dispatchEvent(new Event('change'));
-    demoBtn.textContent = '⏱ Normal Flow (3s)';
-    await new Promise(r => setTimeout(r, 3000));
-
-    // Step 2: Peak
-    selector.value = 'peak';
-    selector.dispatchEvent(new Event('change'));
-    demoBtn.textContent = '⏱ Peak Crowd (4s)';
-    await new Promise(r => setTimeout(r, 4000));
-
-    // Step 3: Emergency
-    selector.value = 'emergency';
-    selector.dispatchEvent(new Event('change'));
-    demoBtn.textContent = '⏱ Emergency (5s)';
-    await new Promise(r => setTimeout(r, 5000));
-
-    // End Demo
-    selector.value = 'normal';
-    selector.dispatchEvent(new Event('change'));
-    demoBtn.disabled = false;
-    demoBtn.textContent = originalText;
-  };
-
-  document.getElementById('btn-run-demo')?.addEventListener('click', runDemo);
+  // Demo Mode
+  document.getElementById('btn-run-demo')?.addEventListener('click', (e) => {
+    scenarioManager.runDemo(e.target, document.getElementById('scenario-selector'));
+  });
 
   // Helper: Route Explanation (Task 4)
   function updateRouteExplanation(pathIds) {

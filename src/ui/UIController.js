@@ -163,6 +163,22 @@ export class UIController {
       this.showAlert('Operational HUD Active: Real-time telemetry calibration complete.');
     }
   }
+
+  /**
+   * Toggles the critical alert UI for Emergency Mode.
+   * @param {boolean} isActive 
+   */
+  setEmergencyUI(isActive) {
+    document.body.classList.toggle('emergency-active', isActive);
+    const banner = document.getElementById('emergency-banner');
+    if (banner) {
+      banner.style.display = isActive ? 'flex' : 'none';
+    }
+    
+    if (isActive) {
+      this.showAlert('CRITICAL: Emergency Evacuation Mode Active. All non-essential systems dimmed.');
+    }
+  }
 }
 
 export const ui = new UIController();

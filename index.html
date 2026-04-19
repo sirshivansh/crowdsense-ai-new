@@ -4,7 +4,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CrowdSense AI New - Live Attendee Map</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://*.googleapis.com https://*.firebaseapp.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com;">
+  <title>CrowdSense AI Control Center</title>
   <meta name="description" content="Live stadium map, crowd congestion tracker, and optimal routes for attendees." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,7 +24,14 @@
   </div>
 
   <!-- Header / Navigation -->
-  <header class="topbar glass-panel">
+  <div id="emergency-banner" class="emergency-alert-banner" style="display: none;">
+    <div class="banner-content">
+      <span class="banner-icon">🚨</span>
+      <span class="banner-text">CRITICAL: EMERGENCY EVACUATION MODE ACTIVE — CLEARING ROUTES TO GATES A & B</span>
+    </div>
+  </div>
+
+  <header class="topbar glass-panel" role="banner">
     <div class="logo">
       <span class="logo-icon" aria-hidden="true">🏟️</span>
       <h1>CrowdSense <strong>AI New</strong></h1>
@@ -239,7 +247,7 @@
     </main>
 
     <!-- Fixed Right Data Column — unified glass panel -->
-    <aside class="right-panel glass-panel" aria-label="Live data and controls panel">
+    <aside class="right-panel glass-panel" aria-label="Live data and controls panel" aria-live="polite">
       <!-- Task 3: System Status Panel -->
       <section class="widget-section status-panel" id="system-status" role="status" aria-label="System health indicators">
         <div class="header-with-action">
@@ -253,12 +261,23 @@
           </div>
         </div>
         <div class="status-grid">
-          <div class="status-pill" id="status-simulator-pill"><span class="dot green"></span> Simulator: ON</div>
-          <div class="status-pill" id="status-predictor-pill"><span id="status-predictor" class="dot green"></span> AI: ACTIVE</div>
-          <div id="status-vertex-pill" class="status-pill"><span class="dot grey"></span> Vertex: OFF</div>
-          <div class="status-pill" id="status-firebase-pill"><span class="dot green"></span> Firebase: OK</div>
-          <div id="status-auth-pill" class="status-pill"><span class="dot grey"></span> Auth: --</div>
-          <div class="status-pill" id="status-analytics-pill"><span class="dot green"></span> Analytics: ON</div>
+          <div class="status-pill" id="status-simulator-pill" aria-live="polite"><span class="dot green"></span> Simulator: ON</div>
+          <div class="status-pill" id="status-predictor-pill" aria-live="polite"><span class="dot green"></span> Predictor: OK</div>
+          <div class="status-pill" id="status-vertex-pill" aria-live="polite"><span class="dot grey"></span> Vertex AI: OFF</div>
+          <div class="status-pill" id="status-firebase-pill" aria-live="polite"><span class="dot green"></span> Firebase: OK</div>
+          <div class="status-pill" id="status-analytics-pill" aria-live="polite"><span class="dot green"></span> Analytics: OK</div>
+          <div class="status-pill" id="status-auth-pill" aria-live="polite"><span class="dot green"></span> Auth: OK</div>
+        </div>
+      </section>
+
+      <!-- Section 1: AI Insight -->
+      <section class="widget-section ai-card" id="ai-insight" aria-labelledby="ai-title" aria-live="assertive">
+        <div class="ai-header">
+          <h4 id="ai-title" class="widget-title">AI Prediction & Analysis</h4>
+          <span class="ai-badge">Vertex AI Powered</span>
+        </div>
+        <div class="ai-action-box">
+          <span class="action-label">Recommended Action</span>
         </div>
       </section>
 
