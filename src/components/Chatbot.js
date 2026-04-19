@@ -1,4 +1,5 @@
 import { simulator } from '../simulation/simulator.js';
+import { Security } from '../utils/security.js';
 
 export class Chatbot {
   constructor() {
@@ -30,9 +31,10 @@ export class Chatbot {
   }
 
   handleSend() {
-    const text = this.input.value.trim();
-    if (!text) return;
+    const rawText = this.input.value.trim();
+    if (!rawText) return;
 
+    const text = Security.sanitize(rawText);
     this.addMessage(text, 'user');
     this.input.value = '';
 

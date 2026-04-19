@@ -8,8 +8,17 @@ import { CongestionPredictor, USE_VERTEX } from './ai/predictor.js';
 import { firebaseService, initAuth, onAuthChanged } from './services/firebaseService.js';
 import { routeCache } from './utils/cache.js';
 import { ui } from './ui/UIController.js';
+import { config, validateConfig, Logger } from './config.js';
+import { Security } from './utils/security.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
+try {
+    validateConfig();
+  } catch (e) {
+    Logger.error('Startup validation failed', e.message);
+    ui.showAlert(`Configuration Error: ${e.message}`);
+  }
+
   // ── Firebase Auth — establish anonymous session before any Firestore writes
   await initAuth();
   onAuthChanged((uid) => {
@@ -61,7 +70,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 🚀 Production Firebase Integration
     firebaseService.saveCrowdData(zones);
-    console.log("📡 Crowd data sent to Firebase:", zones);
+    Logger.info("Crowd data sent to Firebase", zones);
     firebaseService.triggerAlertIfHighDensity(zones);
   });
 
@@ -70,7 +79,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const analysis = await CongestionPredictor.getAnalysis(history, simulator.state.zones);
     if (analysis.isIncreasing && analysis.confidence > 0.6) {
       firebaseService.logPrediction(analysis);
-      console.log("🧠 Prediction logged:", analysis);
+      Logger.info("Prediction logged", analysis);
     }
   });
 
@@ -390,6 +399,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
       if (emergencyActive) emergencyBtn?.click();
       simulator.simulateScenario('normal');
+  });
+
+  // Staff Mode Toggle (Task: Perfect Alignment)
+  document.getElementById('staff-mode-toggle')?.addEventListener('change', (e) => {
+    const isStaff = e.target.checked;
+    document.body.classList.toggle('staff-view', isStaff);
+    Logger.info(`Switched to ${isStaff ? 'Operations' : 'Visitor'} Perspective`);
+    
+    // Immediate refresh of recommendations with extra fidelity
+    updateAIRecommendation(simulator.state);
+    
+    if (isStaff) {
+      ui.showAlert('Operations Mode: High-Fidelity telemetry enabled.');
     }
   });
 

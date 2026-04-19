@@ -13,6 +13,8 @@
 </head>
 
 <body>
+  <a href="#main-app-container" class="skip-link">Skip to main content</a>
+
   <!-- Emergency Banner (Hidden by default) -->
   <div id="emergency-banner" class="emergency-banner hidden" role="alert" aria-live="assertive">
     <span class="banner-icon">⚠️</span>
@@ -228,7 +230,16 @@
     <aside class="right-panel glass-panel" aria-label="Live data and controls panel">
       <!-- Task 3: System Status Panel -->
       <section class="widget-section status-panel" id="system-status" role="status" aria-label="System health indicators">
-        <h4 class="widget-title">System Health</h4>
+        <div class="header-with-action">
+          <h4 class="widget-title">System Health</h4>
+          <div class="view-toggle">
+            <span class="view-label">Staff Mode</span>
+            <label class="switch" title="Toggle between Public and Staff view">
+              <input type="checkbox" id="staff-mode-toggle" aria-label="Toggle Staff Mode">
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
         <div class="status-grid">
           <div class="status-pill"><span class="dot green"></span> Simulator: ON</div>
           <div class="status-pill"><span id="status-predictor" class="dot green"></span> AI: ACTIVE</div>
